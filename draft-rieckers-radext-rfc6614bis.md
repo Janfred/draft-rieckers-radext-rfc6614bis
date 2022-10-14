@@ -8,13 +8,13 @@ obsoletes: 6614
 docname: draft-rieckers-radext-rfc6614bis-latest
 submissiontype: IETF
 v: 3
-area: SEC
-workgroup: Internet Engineering Task Force
+area: "Operations and Management"
+workgroup: "RADIUS EXTensions"
 keyword:
 venue:
-  group: RADIUS Extensions Reanimated (radextra)
-  type: BoF
-  mail: radext@ietf.org
+  group: "RADIUS EXTensions"
+  type: "Working Group"
+  mail: "radext@ietf.org"
 
 author:
   - name: Jan-Frederik Rieckers
