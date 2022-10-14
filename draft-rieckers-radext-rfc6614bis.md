@@ -5,7 +5,7 @@ category: std
 
 obsoletes: 6614
 
-docname: draft-rieckers-radext-rfc6614bis
+docname: draft-rieckers-radext-rfc6614bis-latest
 submissiontype: IETF
 v: 3
 area: SEC
