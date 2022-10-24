@@ -174,7 +174,7 @@ The support for TLS-PSK is OPTIONAL.[^6]{:jf}
 
 [^3]: This sentence does not include an RFC2119 modifier. Should be fixed.
 [^4]: Maybe usage of CN should be deprecated here?
-[^5]: Replace MAY with SHOULD here?
+[^5]: Replace may with should here?
 [^6]: Here more text for the requirements of TLS-PSK is needed.
 
 ## Connecting Client Identity
