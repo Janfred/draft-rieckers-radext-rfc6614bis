@@ -29,6 +29,17 @@ author:
     abbrev: DFN
     uri: www.dfn.de
     role: editor
+  - name: Stefan Winter
+    org: Fondation Restena | Restena Foundation
+    street: 2, avenue de l'Université
+    code: 4365
+    city: Esch-sur-Alzette
+    country: Luxembourg
+    email: stefan.winter@restena.lu
+    abbrev: RESTENA
+    uri: www.restena.lu
+    role: contributor
+    
 
 normative:
 
@@ -384,6 +395,53 @@ Upon approval, IANA should update the Reference to radsec in the Service Name an
 * Assignment notes: The TCP port 2083 was already previously assigned by IANA for "RadSec", an early implementation of RADIUS/TLS, prior to issuance of the experimental RFC 6614. [This document] updates RFC 6614, while maintaining backward compatibility, if configured. For further details see RFC 6614, Appendix A or [This document], {{BackwardComp}}.
 
 --- back
+
+# Lessons learned from deployments of the Experimental {{RFC6614}}
+
+There are at least two major (world-scale) deployments of {{RFC6614}}.
+
+## eduroam
+
+eduroam is a globally operating Wi-Fi roaming consortium exclusively for persons in Research and Education. For an extensive background on eduroam and its authentication fabric architecture, refer to {{RFC7593}}. 
+
+Over time, more than a dozen out of 100+ national branches of eduroam used RADIUS/TLS in production to secure their country-to-country RADIUS proxy connections. This number is big enough to attest that the protocol does work, and scales. The number is also low enough to wonder why RADIUS/UDP continued to be used by a majority of country deployments despite its significant security issues.
+
+Operational experience reveals that the main reason is related to the choice of PKIX certificates for securing the proxy interconnections. Compared to shared secrets, certificates are more complex to handle in multiple dimensions:
+
+* Lifetime: PKIX certificates have an expiry date, and need administrator attention and expertise for their renewal
+* Validation: The validation of a certificate (both client and server) requires contacting a third party to verify the recovaction status. This either takes time during session setup (OCSP checks) or requires the presence of a fresh CRL on the server - this in turn requires regular update of that CRL.
+* Issuance: PKIX certificates carry properties in the Subject and extensions that need to be vetted. Depending on the CA policy, a certificate request may need significant human intervention to be verified. In particular, the authorisation of a requester to operate a server for a particular NAI realm needs to be verified. This rules out public "browser-trusted" CAs; eduroam is operating a special-purpose CA for eduroam RADIUS/TLS purposes.
+* Automatic failure over time: CRL refresh and certificate renewal must be attended to regularly. Failure to do so leads to failure of the authentication service. Among other reasons, employee churn with incorrectly transferred or forgotten responsibilities is a risk factor.
+
+It appears that these complexities often outweigh the argument of improved security; and a fallback to RADIUS/UDP is seen as the more appealing option.
+
+It can be considered an important result of the experiment in {{RFC6614}} that providing less complex ways of operating RADIUS/TLS are required. The more thoroughly specified provisions in the current document towards TLS-PSK and raw public keys are a response to this insight.
+
+On the other hand, using RADIUS/TLS in combination with Dynamic Discovery as per {{RFC7585}} necessitates the use of PKIX certificates. So, the continued ability to operate with PKIX certificates is also important and cannot be discontinued without sacrificing vital funcionality of large roaming consortia.  
+
+## Wireless Broadband Alliance's OpenRoaming
+
+OpenRoaming is a globally operating Wi-Fi roaming consortium for the general public, operated by the Wireless Broadband Alliance (WBA). With its (optional) settled usage of hotspots, the consortium requires both RADIUS authentication as well as RADIUS accounting.
+
+The consortium operational procedures were defined in the late 2010s when {{RFC6614}} and {{RFC7585}} were long available. The consortium decided to fully base itself on these two RFCs.
+
+In this architecture, using PSKs or raw public keys is not an option. The complexities around PKIX certificates as discussed in the previous section are believed to be controllable: the consortium operates its own special-purpose CA and can rely on a reliable source of truth for operator authorisation (becoming an operator requires a paid membership in WBA); expiry and revocation topics can be expected to be dealt with as high-priority because of the monetary implications in case of infrastructure failure during settled operation.
+
+## Participating in more than one roaming consortium
+
+It is possible for a RADIUS/TLS (home) server to participate in more than one roaming consortium, i.e. to authenticate its users to multiple clients from distinct consortia, which present client certificates from their respective consortium's CA; and which expect the server to present a certificate from the matching CA. 
+
+The eduroam consortium has chosen to cooperate with (the settlement-free parts of) OpenRoaming to allow eduroam users to log in to (settlement-free) OpenRoaming hotspots. 
+
+eduroam RADIUS/TLS servers thus may be contacted by OpenRoaming clients expecting an OpenRoaming server certificate, and by eduroam clients expecting an eduroam server certificate.
+
+It is therefore necessary to decide on the certificate to present during TLS session establishment. To make that decision, the availability of Trusted CA Indication in the client TLS message is important.
+
+It can be considered an important result of the experiment in {{RFC6614}} that Trusted CA Indication is an important asset for inter-connectivity of multiple roaming consortia.
+
+# Interoperable Implementations
+
+{{RFC6614}} is implemented and interoperates between at least three server implementations: FreeRADIUS, radsecproxy, Radiator. It is also implemented among a number of Wireless Access Points / Controllers from numerous vendors, including but not limited to: Aruba Networks, LANCOM Systems.
 
 # Backward compatibility {#BackwardComp}
 
