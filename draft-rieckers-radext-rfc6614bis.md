@@ -38,8 +38,7 @@ author:
     email: stefan.winter@restena.lu
     abbrev: RESTENA
     uri: www.restena.lu
-    role: contributor
-    
+
 
 normative:
 
@@ -402,7 +401,7 @@ There are at least two major (world-scale) deployments of {{RFC6614}}.
 
 ## eduroam
 
-eduroam is a globally operating Wi-Fi roaming consortium exclusively for persons in Research and Education. For an extensive background on eduroam and its authentication fabric architecture, refer to {{RFC7593}}. 
+eduroam is a globally operating Wi-Fi roaming consortium exclusively for persons in Research and Education. For an extensive background on eduroam and its authentication fabric architecture, refer to {{?RFC7593}}. 
 
 Over time, more than a dozen out of 100+ national branches of eduroam used RADIUS/TLS in production to secure their country-to-country RADIUS proxy connections. This number is big enough to attest that the protocol does work, and scales. The number is also low enough to wonder why RADIUS/UDP continued to be used by a majority of country deployments despite its significant security issues.
 
