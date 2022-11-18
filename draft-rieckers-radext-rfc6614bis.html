@@ -6,24 +6,24 @@
 <meta content="initial-scale=1.0" name="viewport">
 <title>Transport Layer Security (TLS) Encryption for RADIUS</title>
 <meta content="Jan-Frederik Rieckers" name="author">
+<meta content="Stefan Winter" name="author">
 <meta content="
        This document specifies a transport profile for RADIUS using Transport Layer Security (TLS) over TCP as the transport protocol.
 This enables dynamic trust relationships between RADIUS servers as well as encrypting RADIUS traffic between servers using a shared secret. 
     " name="description">
-<meta content="xml2rfc 3.15.1" name="generator">
+<meta content="xml2rfc 3.15.2" name="generator">
 <meta content="RADIUS" name="keyword">
 <meta content="TLS" name="keyword">
 <meta content="draft-rieckers-radext-rfc6614bis-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.15.1
-    Python 3.10.5
+  xml2rfc 3.15.2
+    Python 3.10.8
     appdirs 1.4.4
     ConfigArgParse 1.5.3
     google-i18n-address 2.5.2
     html5lib 1.1
     intervaltree 3.1.0
     Jinja2 3.1.2
-    kitchen 1.2.6
     lxml 4.9.1
     MarkupSafe 2.1.1
     pycountry 22.3.5
@@ -31,6 +31,7 @@ This enables dynamic trust relationships between RADIUS servers as well as encry
     requests 2.27.1
     setuptools 59.4.0
     six 1.16.0
+    wcwidth 0.2.5
 -->
 <link href="draft-rieckers-radext-rfc6614bis.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1037,11 +1038,11 @@ svg :is([stroke="fill"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">RADIUS over TLS</td>
-<td class="right">October 2022</td>
+<td class="right">November 2022</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Rieckers</td>
-<td class="center">Expires 27 April 2023</td>
+<td class="left">Rieckers &amp; Winter</td>
+<td class="center">Expires 22 May 2023</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1057,18 +1058,22 @@ svg :is([stroke="fill"], [fill^="#fff"]) {
 <a href="https://www.rfc-editor.org/rfc/rfc6614" class="eref">6614</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2022-10-24" class="published">24 October 2022</time>
+<time datetime="2022-11-18" class="published">18 November 2022</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2023-04-27">27 April 2023</time></dd>
-<dt class="label-authors">Author:</dt>
+<dd class="expires"><time datetime="2023-05-22">22 May 2023</time></dd>
+<dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">J.-F. Rieckers, <span class="editor">Ed.</span>
 </div>
 <div class="org">DFN</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Winter</div>
+<div class="org">RESTENA</div>
 </div>
 </dd>
 </dl>
@@ -1111,7 +1116,7 @@ This enables dynamic trust relationships between RADIUS servers as well as encry
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 27 April 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 May 2023.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1220,13 +1225,30 @@ This enables dynamic trust relationships between RADIUS servers as well as encry
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-backward-compatibility" class="internal xref">Backward compatibility</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-lessons-learned-from-deploy" class="internal xref">Lessons learned from deployments of the Experimental RFC6614</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-eduroam" class="internal xref">eduroam</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-wireless-broadband-alliance" class="internal xref">Wireless Broadband Alliance's OpenRoaming</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-participating-in-more-than-" class="internal xref">Participating in more than one roaming consortium</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-interoperable-implementatio" class="internal xref">Interoperable Implementations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-C" class="auto internal xref">Appendix C</a>.  <a href="#name-backward-compatibility" class="internal xref">Backward compatibility</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-E" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1394,14 +1416,14 @@ The shared secret to compute the (obsolete) MD5 integrity checks and attribute o
 </li>
             <li class="normal" id="section-2.3.1-2.3">Implementations <span class="bcp14">SHOULD</span> indicate their trusted Certification Authorities (CAs). See <span>[<a href="#RFC5246" class="cite xref">RFC5246</a>]</span>, Section 7.4.4 and <span>[<a href="#RFC6066" class="cite xref">RFC6066</a>]</span>, Section 6 for TLS 1.2 and <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, Section 4.2.4 for TLS 1.3.<a href="#section-2.3.1-2.3" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-2.3.1-2.4">Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presendet certificate. <span class="cref" id="_3">This sentence does not include an RFC2119 modifier. Should be fixed.<span class="crefSource">Janfred</span></span>
+            <li class="normal" id="section-2.3.1-2.4">Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presented certificate. <span class="cref" id="_3">This sentence does not include an RFC2119 modifier. Should be fixed.<span class="crefSource">Janfred</span></span>
 DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries.
 For verification, only one of these entries is to be considered.
 The following precedence applies:
 for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN.
 Implementors of this specification are advised to read <span>[<a href="#RFC6125" class="cite xref">RFC6125</a>]</span>, Section 6, for more details on DNS name validation. <span class="cref" id="_4">Maybe usage of CN should be deprecated here?<span class="crefSource">Janfred</span></span><a href="#section-2.3.1-2.4" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-2.3.1-2.5">Implementations <span class="bcp14">MAY</span> allow the configuration of a set of addiional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).<a href="#section-2.3.1-2.5" class="pilcrow">¶</a>
+            <li class="normal" id="section-2.3.1-2.5">Implementations <span class="bcp14">MAY</span> allow the configuration of a set of additional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).<a href="#section-2.3.1-2.5" class="pilcrow">¶</a>
 </li>
             <li class="normal" id="section-2.3.1-2.6">When the configured trust base changes (e.g., removal of a CA from the list of trusted CAs; issuance of a new CRL for a given CA), implementations <span class="bcp14">MAY</span> renegotiate the TLS session to reassess the connecting peer's continued authorization.<span class="cref" id="_5">Replace may with should here?<span class="crefSource">Janfred</span></span><a href="#section-2.3.1-2.6" class="pilcrow">¶</a>
 </li>
@@ -1413,7 +1435,7 @@ Implementors of this specification are advised to read <span>[<a href="#RFC6125"
           <h4 id="name-authentication-using-certif">
 <a href="#section-2.3.2" class="section-number selfRef">2.3.2. </a><a href="#name-authentication-using-certif" class="section-name selfRef">Authentication using certificate fingerprints</a>
           </h4>
-<p id="section-2.3.2-1">RADIUS/TLS implementations <span class="bcp14">SHOULD</span> allow the configuration of a list of trusted certificates, identified via fingerprint of the DER encded certificate octets.
+<p id="section-2.3.2-1">RADIUS/TLS implementations <span class="bcp14">SHOULD</span> allow the configuration of a list of trusted certificates, identified via fingerprint of the DER encoded certificate octets.
 When implementing this model, support for SHA-1 as hash algorithm for the fingerprint is <span class="bcp14">REQUIRED</span>, and support for the more contemporary has function SHA-256 is <span class="bcp14">RECOMMENDED</span>.<a href="#section-2.3.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1703,7 +1725,7 @@ While this specification mandates support for SHA-1, a later revision will likel
 </li>
         <li class="normal" id="section-6-2.4">Description: Secure RADIUS Service<a href="#section-6-2.4" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-6-2.5">Assignment notes: The TCP port 2083 was already previously assigned by IANA for "RadSec", an early implementation of RADIUS/TLS, prior to issuance of the experimental RFC 6614. [This document] updates RFC 6614, while maintaining backward compatibility, if configured. For further details see RFC 6614, Appendix A or [This document], <a href="#BackwardComp" class="auto internal xref">Appendix A</a>.<a href="#section-6-2.5" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.5">Assignment notes: The TCP port 2083 was already previously assigned by IANA for "RadSec", an early implementation of RADIUS/TLS, prior to issuance of the experimental RFC 6614. [This document] updates RFC 6614, while maintaining backward compatibility, if configured. For further details see RFC 6614, Appendix A or [This document], <a href="#BackwardComp" class="auto internal xref">Appendix C</a>.<a href="#section-6-2.5" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
@@ -1793,34 +1815,99 @@ While this specification mandates support for SHA-1, a later revision will likel
 <span class="refAuthor">DeKok, A.</span>, <span class="refTitle">"Datagram Transport Layer Security (DTLS) as a Transport Layer for RADIUS"</span>, <span class="seriesInfo">RFC 7360</span>, <span class="seriesInfo">DOI 10.17487/RFC7360</span>, <time datetime="2014-09" class="refDate">September 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7360">https://www.rfc-editor.org/rfc/rfc7360</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC7585">[RFC7585]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Winter, S.</span> and <span class="refAuthor">M. McCauley</span>, <span class="refTitle">"Dynamic Peer Discovery for RADIUS/TLS and RADIUS/DTLS Based on the Network Access Identifier (NAI)"</span>, <span class="seriesInfo">RFC 7585</span>, <span class="seriesInfo">DOI 10.17487/RFC7585</span>, <time datetime="2015-10" class="refDate">October 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7585">https://www.rfc-editor.org/rfc/rfc7585</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7593">[RFC7593]</dt>
+      <dd>
+<span class="refAuthor">Wierenga, K.</span>, <span class="refAuthor">Winter, S.</span>, and <span class="refAuthor">T. Wolniewicz</span>, <span class="refTitle">"The eduroam Architecture for Network Roaming"</span>, <span class="seriesInfo">RFC 7593</span>, <span class="seriesInfo">DOI 10.17487/RFC7593</span>, <time datetime="2015-09" class="refDate">September 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7593">https://www.rfc-editor.org/rfc/rfc7593</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </section>
-<div id="BackwardComp">
+<div id="lessons-learned-from-deployments-of-the-experimental-rfc6614">
 <section id="appendix-A">
-      <h2 id="name-backward-compatibility">
-<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-backward-compatibility" class="section-name selfRef">Backward compatibility</a>
+      <h2 id="name-lessons-learned-from-deploy">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-lessons-learned-from-deploy" class="section-name selfRef">Lessons learned from deployments of the Experimental <em class="cite xref">[RFC6614]</em></a>
       </h2>
-<p id="appendix-A-1">TODO describe necessary steps to configure common servers for compatibility with this version.
-Hopefully the differences to <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span> are small enough that almost no config change is necessary.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">There are at least two major (world-scale) deployments of <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span>.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="eduroam">
+<section id="appendix-A.1">
+        <h3 id="name-eduroam">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-eduroam" class="section-name selfRef">eduroam</a>
+        </h3>
+<p id="appendix-A.1-1">eduroam is a globally operating Wi-Fi roaming consortium exclusively for persons in Research and Education. For an extensive background on eduroam and its authentication fabric architecture, refer to <span>[<a href="#RFC7593" class="cite xref">RFC7593</a>]</span>.<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-2">Over time, more than a dozen out of 100+ national branches of eduroam used RADIUS/TLS in production to secure their country-to-country RADIUS proxy connections. This number is big enough to attest that the protocol does work, and scales. The number is also low enough to wonder why RADIUS/UDP continued to be used by a majority of country deployments despite its significant security issues.<a href="#appendix-A.1-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-3">Operational experience reveals that the main reason is related to the choice of PKIX certificates for securing the proxy interconnections. Compared to shared secrets, certificates are more complex to handle in multiple dimensions:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.1-4.1">Lifetime: PKIX certificates have an expiry date, and need administrator attention and expertise for their renewal<a href="#appendix-A.1-4.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="appendix-A.1-4.2">Validation: The validation of a certificate (both client and server) requires contacting a third party to verify the recovaction status. This either takes time during session setup (OCSP checks) or requires the presence of a fresh CRL on the server - this in turn requires regular update of that CRL.<a href="#appendix-A.1-4.2" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="appendix-A.1-4.3">Issuance: PKIX certificates carry properties in the Subject and extensions that need to be vetted. Depending on the CA policy, a certificate request may need significant human intervention to be verified. In particular, the authorisation of a requester to operate a server for a particular NAI realm needs to be verified. This rules out public "browser-trusted" CAs; eduroam is operating a special-purpose CA for eduroam RADIUS/TLS purposes.<a href="#appendix-A.1-4.3" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="appendix-A.1-4.4">Automatic failure over time: CRL refresh and certificate renewal must be attended to regularly. Failure to do so leads to failure of the authentication service. Among other reasons, employee churn with incorrectly transferred or forgotten responsibilities is a risk factor.<a href="#appendix-A.1-4.4" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="appendix-A.1-5">It appears that these complexities often outweigh the argument of improved security; and a fallback to RADIUS/UDP is seen as the more appealing option.<a href="#appendix-A.1-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-6">It can be considered an important result of the experiment in <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span> that providing less complex ways of operating RADIUS/TLS are required. The more thoroughly specified provisions in the current document towards TLS-PSK and raw public keys are a response to this insight.<a href="#appendix-A.1-6" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-7">On the other hand, using RADIUS/TLS in combination with Dynamic Discovery as per <span>[<a href="#RFC7585" class="cite xref">RFC7585</a>]</span> necessitates the use of PKIX certificates. So, the continued ability to operate with PKIX certificates is also important and cannot be discontinued without sacrificing vital funcionality of large roaming consortia.<a href="#appendix-A.1-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="wireless-broadband-alliances-openroaming">
+<section id="appendix-A.2">
+        <h3 id="name-wireless-broadband-alliance">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-wireless-broadband-alliance" class="section-name selfRef">Wireless Broadband Alliance's OpenRoaming</a>
+        </h3>
+<p id="appendix-A.2-1">OpenRoaming is a globally operating Wi-Fi roaming consortium for the general public, operated by the Wireless Broadband Alliance (WBA). With its (optional) settled usage of hotspots, the consortium requires both RADIUS authentication as well as RADIUS accounting.<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-2">The consortium operational procedures were defined in the late 2010s when <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span> and <span>[<a href="#RFC7585" class="cite xref">RFC7585</a>]</span> were long available. The consortium decided to fully base itself on these two RFCs.<a href="#appendix-A.2-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-3">In this architecture, using PSKs or raw public keys is not an option. The complexities around PKIX certificates as discussed in the previous section are believed to be controllable: the consortium operates its own special-purpose CA and can rely on a reliable source of truth for operator authorisation (becoming an operator requires a paid membership in WBA); expiry and revocation topics can be expected to be dealt with as high-priority because of the monetary implications in case of infrastructure failure during settled operation.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="participating-in-more-than-one-roaming-consortium">
+<section id="appendix-A.3">
+        <h3 id="name-participating-in-more-than-">
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-participating-in-more-than-" class="section-name selfRef">Participating in more than one roaming consortium</a>
+        </h3>
+<p id="appendix-A.3-1">It is possible for a RADIUS/TLS (home) server to participate in more than one roaming consortium, i.e. to authenticate its users to multiple clients from distinct consortia, which present client certificates from their respective consortium's CA; and which expect the server to present a certificate from the matching CA.<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-2">The eduroam consortium has chosen to cooperate with (the settlement-free parts of) OpenRoaming to allow eduroam users to log in to (settlement-free) OpenRoaming hotspots.<a href="#appendix-A.3-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-3">eduroam RADIUS/TLS servers thus may be contacted by OpenRoaming clients expecting an OpenRoaming server certificate, and by eduroam clients expecting an eduroam server certificate.<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-4">It is therefore necessary to decide on the certificate to present during TLS session establishment. To make that decision, the availability of Trusted CA Indication in the client TLS message is important.<a href="#appendix-A.3-4" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-5">It can be considered an important result of the experiment in <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span> that Trusted CA Indication is an important asset for inter-connectivity of multiple roaming consortia.<a href="#appendix-A.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="interoperable-implementations">
+<section id="appendix-B">
+      <h2 id="name-interoperable-implementatio">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-interoperable-implementatio" class="section-name selfRef">Interoperable Implementations</a>
+      </h2>
+<p id="appendix-B-1"><span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span> is implemented and interoperates between at least three server implementations: FreeRADIUS, radsecproxy, Radiator. It is also implemented among a number of Wireless Access Points / Controllers from numerous vendors, including but not limited to: Aruba Networks, LANCOM Systems.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="BackwardComp">
+<section id="appendix-C">
+      <h2 id="name-backward-compatibility">
+<a href="#appendix-C" class="section-number selfRef">Appendix C. </a><a href="#name-backward-compatibility" class="section-name selfRef">Backward compatibility</a>
+      </h2>
+<p id="appendix-C-1">TODO describe necessary steps to configure common servers for compatibility with this version.
+Hopefully the differences to <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span> are small enough that almost no config change is necessary.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="acknowledgments">
-<section id="appendix-B">
+<section id="appendix-D">
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-B-1">Thanks to the original authors of RFC 6614: Stefan Winter, Mice McCauley, Stig Venaas and Klaas Vierenga.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
-<p id="appendix-B-2">TODO more acknowledgements<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<p id="appendix-D-1">Thanks to the original authors of RFC 6614: Stefan Winter, Mice McCauley, Stig Venaas and Klaas Vierenga.<a href="#appendix-D-1" class="pilcrow">¶</a></p>
+<p id="appendix-D-2">TODO more acknowledgements<a href="#appendix-D-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-C">
-      <h2 id="name-authors-address">
-<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+<section id="appendix-E">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Jan-Frederik Rieckers (<span class="role">editor</span>)</span></div>
@@ -1837,6 +1924,22 @@ Hopefully the differences to <span>[<a href="#RFC6614" class="cite xref">RFC6614
 <div class="url">
 <span>URI:</span>
 <a href="www.dfn.de" class="url">www.dfn.de</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Stefan Winter</span></div>
+<div dir="auto" class="left"><span class="org">Fondation Restena | Restena Foundation</span></div>
+<div dir="auto" class="left"><span class="street-address">2, avenue de l'Université</span></div>
+<div dir="auto" class="left">L-<span class="postal-code">4365</span> <span class="locality">Esch-sur-Alzette</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Luxembourg</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:stefan.winter@restena.lu" class="email">stefan.winter@restena.lu</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="www.restena.lu" class="url">www.restena.lu</a>
 </div>
 </address>
 </section>
