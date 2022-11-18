@@ -862,7 +862,7 @@ Appendix C.  Backward compatibility
 
 Acknowledgments
 
-   Thanks to the original authors of RFC 6614: Stefan Winter, Mice
+   Thanks to the original authors of RFC 6614: Stefan Winter, Mike
    McCauley, Stig Venaas and Klaas Vierenga.
 
    TODO more acknowledgements
