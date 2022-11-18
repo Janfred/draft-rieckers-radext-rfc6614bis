@@ -165,18 +165,18 @@ All RADIUS/TLS implementations MUST implement this model, following the followin
 * Implementations MUST allow the configuration of a list of trusted Certificate Authorities for incoming connections.
 * Certificate validation MUST include the verification rules as per {{!RFC5280}}.
 * Implementations SHOULD indicate their trusted Certification Authorities (CAs). See {{RFC5246}}, Section 7.4.4 and {{!RFC6066}}, Section 6 for TLS 1.2 and {{RFC8446}}, Section 4.2.4 for TLS 1.3.
-* Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presendet certificate. [^3]{:jf}
+* Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presented certificate. [^3]{:jf}
   DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries.
   For verification, only one of these entries is to be considered.
   The following precedence applies:
   for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN.
   Implementors of this specification are advised to read {{?RFC6125}}, Section 6, for more details on DNS name validation. [^4]{:jf}
-* Implementations MAY allow the configuration of a set of addiional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).
+* Implementations MAY allow the configuration of a set of additional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).
 * When the configured trust base changes (e.g., removal of a CA from the list of trusted CAs; issuance of a new CRL for a given CA), implementations MAY renegotiate the TLS session to reassess the connecting peer's continued authorization.[^5]{:jf}
 
 ### Authentication using certificate fingerprints
 
-RADIUS/TLS implementations SHOULD allow the configuration of a list of trusted certificates, identified via fingerprint of the DER encded certificate octets.
+RADIUS/TLS implementations SHOULD allow the configuration of a list of trusted certificates, identified via fingerprint of the DER encoded certificate octets.
 When implementing this model, support for SHA-1 as hash algorithm for the fingerprint is REQUIRED, and support for the more contemporary has function SHA-256 is RECOMMENDED.
 
 ### Authentication using TLS-PSK
