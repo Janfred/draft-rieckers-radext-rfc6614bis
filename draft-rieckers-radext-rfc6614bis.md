@@ -401,7 +401,7 @@ There are at least two major (world-scale) deployments of {{RFC6614}}.
 
 ## eduroam
 
-eduroam is a globally operating Wi-Fi roaming consortium exclusively for persons in Research and Education. For an extensive background on eduroam and its authentication fabric architecture, refer to {{?RFC7593}}. 
+eduroam is a globally operating Wi-Fi roaming consortium exclusively for persons in Research and Education. For an extensive background on eduroam and its authentication fabric architecture, refer to {{?RFC7593}}.
 
 Over time, more than a dozen out of 100+ national branches of eduroam used RADIUS/TLS in production to secure their country-to-country RADIUS proxy connections. This number is big enough to attest that the protocol does work, and scales. The number is also low enough to wonder why RADIUS/UDP continued to be used by a majority of country deployments despite its significant security issues.
 
@@ -416,7 +416,7 @@ It appears that these complexities often outweigh the argument of improved secur
 
 It can be considered an important result of the experiment in {{RFC6614}} that providing less complex ways of operating RADIUS/TLS are required. The more thoroughly specified provisions in the current document towards TLS-PSK and raw public keys are a response to this insight.
 
-On the other hand, using RADIUS/TLS in combination with Dynamic Discovery as per {{RFC7585}} necessitates the use of PKIX certificates. So, the continued ability to operate with PKIX certificates is also important and cannot be discontinued without sacrificing vital funcionality of large roaming consortia.  
+On the other hand, using RADIUS/TLS in combination with Dynamic Discovery as per {{RFC7585}} necessitates the use of PKIX certificates. So, the continued ability to operate with PKIX certificates is also important and cannot be discontinued without sacrificing vital funcionality of large roaming consortia.
 
 ## Wireless Broadband Alliance's OpenRoaming
 
@@ -428,9 +428,9 @@ In this architecture, using PSKs or raw public keys is not an option. The comple
 
 ## Participating in more than one roaming consortium
 
-It is possible for a RADIUS/TLS (home) server to participate in more than one roaming consortium, i.e. to authenticate its users to multiple clients from distinct consortia, which present client certificates from their respective consortium's CA; and which expect the server to present a certificate from the matching CA. 
+It is possible for a RADIUS/TLS (home) server to participate in more than one roaming consortium, i.e. to authenticate its users to multiple clients from distinct consortia, which present client certificates from their respective consortium's CA; and which expect the server to present a certificate from the matching CA.
 
-The eduroam consortium has chosen to cooperate with (the settlement-free parts of) OpenRoaming to allow eduroam users to log in to (settlement-free) OpenRoaming hotspots. 
+The eduroam consortium has chosen to cooperate with (the settlement-free parts of) OpenRoaming to allow eduroam users to log in to (settlement-free) OpenRoaming hotspots.
 
 eduroam RADIUS/TLS servers thus may be contacted by OpenRoaming clients expecting an OpenRoaming server certificate, and by eduroam clients expecting an eduroam server certificate.
 
