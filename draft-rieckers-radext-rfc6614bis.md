@@ -182,10 +182,15 @@ When implementing this model, support for SHA-1 as hash algorithm for the finger
 
 The support for TLS-PSK is OPTIONAL.[^6]{:jf}
 
+### Authentication using Raw Public Keys
+
+RADIUS/TLS implementations SHOULD support using Raw Public Keys {{!RFC7250}} for mutual authentication.[^rpk]{:jf}
+
 [^3]: This sentence does not include an RFC2119 modifier. Should be fixed.
 [^4]: Maybe usage of CN should be deprecated here?
 [^5]: Replace may with should here?
-[^6]: Here more text for the requirements of TLS-PSK is needed.
+[^6]: Here more text for the requirements of TLS-PSK is needed. Maybe we also should move this from optional to recommended.
+[^rpk]: TODO: More text here.
 
 ## Connecting Client Identity
 
