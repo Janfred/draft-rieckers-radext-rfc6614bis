@@ -6,7 +6,7 @@ RADIUS EXTensions                                    J.-F. Rieckers, Ed.
 Internet-Draft                                                       DFN
 Obsoletes: 6614 (if approved)                                  S. Winter
 Intended status: Standards Track                                 RESTENA
-Expires: 22 May 2023                                    18 November 2022
+Expires: 25 May 2023                                    21 November 2022
 
 
           Transport Layer Security (TLS) Encryption for RADIUS
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 May 2023.
+   This Internet-Draft will expire on 25 May 2023.
 
 Copyright Notice
 
@@ -76,6 +76,7 @@ Table of Contents
                model
        2.3.2.  Authentication using certificate fingerprints
        2.3.3.  Authentication using TLS-PSK
+       2.3.4.  Authentication using Raw Public Keys
      2.4.  Connecting Client Identity
      2.5.  RADIUS Datagrams
    3.  Design Decisions
@@ -315,7 +316,16 @@ Table of Contents
 2.3.3.  Authentication using TLS-PSK
 
    The support for TLS-PSK is OPTIONAL.
-   // Here more text for the requirements of TLS-PSK is needed.
+   // Here more text for the requirements of TLS-PSK is needed.  Maybe
+   // we also should move this from optional to recommended.
+   //
+   // -- Janfred
+
+2.3.4.  Authentication using Raw Public Keys
+
+   RADIUS/TLS implementations SHOULD support using Raw Public Keys
+   [RFC7250] for mutual authentication.
+   // TODO: More text here.
    //
    // -- Janfred
 
@@ -678,6 +688,12 @@ Table of Contents
    [RFC6613]  DeKok, A., "RADIUS over TCP", RFC 6613,
               DOI 10.17487/RFC6613, May 2012,
               <https://www.rfc-editor.org/rfc/rfc6613>.
+
+   [RFC7250]  Wouters, P., Ed., Tschofenig, H., Ed., Gilmore, J.,
+              Weiler, S., and T. Kivinen, "Using Raw Public Keys in
+              Transport Layer Security (TLS) and Datagram Transport
+              Layer Security (DTLS)", RFC 7250, DOI 10.17487/RFC7250,
+              June 2014, <https://www.rfc-editor.org/rfc/rfc7250>.
 
    [RFC7525]  Sheffer, Y., Holz, R., and P. Saint-Andre,
               "Recommendations for Secure Use of Transport Layer
