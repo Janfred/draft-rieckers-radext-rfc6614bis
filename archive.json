@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-20T00:51:12.931051+00:00",
+  "timestamp": "2022-11-22T00:48:52.171633+00:00",
   "repo": "Janfred/draft-rieckers-radext-rfc6614bis",
   "labels": [
     {
@@ -86,7 +86,7 @@
       "labels": [],
       "body": "From draft:\r\n\r\n> Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presendet certificate. [3](https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/blob/main/draft-rieckers-radext-rfc6614bis.md#user-content-fn-3-f6a9124d71ad00b10225e132b70962fb){:jf} DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries. For verification, only one of these entries is to be considered. The following precedence applies: for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN. Implementors of this specification are advised to read {{?RFC6125}}, Section 6, for more details on DNS name validation.\r\n\r\nI think this should be defined more carefully. We do not want this to be interpreted so that server should always match client's IP address and DNS name to its certificate. Actually this kind of matching should not be in my opinion required since we may for example rely to the fact that the client/peer/server has a certificate from approved CA and we do not really care about the servers DNS name or its IP address -- only that it has a certificate certified by approved CA.",
       "createdAt": "2022-11-18T10:47:28Z",
-      "updatedAt": "2022-11-18T10:57:00Z",
+      "updatedAt": "2022-11-21T15:56:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -95,6 +95,13 @@
           "body": "I think these are also related:\r\n\r\n> Support for certificate-based mutual authentication is REQUIRED.[1](https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/blob/main/draft-rieckers-radext-rfc6614bis.md#user-content-fn-1-1cf6501693938a9a2a2c4f915f6ff285){:jf}\r\nNegotiation of mutual authentication is REQUIRED.[2](https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/blob/main/draft-rieckers-radext-rfc6614bis.md#user-content-fn-2-1cf6501693938a9a2a2c4f915f6ff285){:jf}\r\n\r\nI think the first comment (1) might be about server accepting clients without checking client certificate. In Radiator we support this functionality and it could be useful for example in the trusted networks, where you can for example accept certain client IP network block to connect just by checking or not checking the server certificate.",
           "createdAt": "2022-11-18T10:57:00Z",
           "updatedAt": "2022-11-18T10:57:00Z"
+        },
+        {
+          "author": "restena-sw",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Well (2) is only about the technicality of the TLS handshake: during the handshake, there is always a server and a client certificate. Situations like typically found in web contexts (server certificate, but no client certificate, and thus no control of client identity) are to be avoided. I think this makes sense and should stay - in a RADIUS environment, clients should not be allowed to remain anonymous.\r\n\r\n(1) is only about support for TLS with server/client certificates, not about actually checking the certificates. I believe this also should stay; we want PKIX-style client+server auth to be a supported mode of operation.\r\n\r\nThe only real question is whether the checks are allowed to be turned off. That's a policy decision by the deployer much more than a technical specification. I understand that the phrase \"Peer validation _always_ includes ...\" reads like a MUST; which it arguably shouldn't.\r\n\r\nMaybe it is better to speak of a list of things a peer CAN look at to verify the other end's identity; and to add that when communicating outside trusted networks one SHOULD verify the identity (or can we even say MUST?).\r\n\r\nStrawman text:\r\n\r\nPeers MUST validate the identity of the respective other end of the connection, unless both ends are inside the same trusted network.\r\n* Both TLS Clients and TLS Servers validate presented certificates against their locally configured trust anchors as per PKIX (RFC5280).\r\n* TLS Clients validate server identity to match their local configuration:\r\n  - if the expected TLS server was configured as a hostname, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate Subject\r\n  - if the expected TLS server was configured as an IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate Subject\r\n  - if the expected TLS server was not configured but discovered as per RFC7585, using DNSSEC for the entire discovery process, the realm which was used as input to the discovery is matched against the presented realm names from the subjectAltName:naiRealm extension; if no such extension is present, the certificate is accepted without further name checks immediately after the RFC5280 trust chain checks.\r\n* TLS Servers validate the incoming certificate against a local database of acceptable clients. The database may enumerate acceptable clients either by IP address or by a name component in the certificate.\r\n   - for clients configured by name, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate Subject\r\n   - for clients configured by their source IP addresses, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate Subject\r\n  - it is possible for the TLS server to not require additional name checks for incoming TLS clients. In this case, the certificate is accepted immediately after the RFC5280 trust chain checks.",
+          "createdAt": "2022-11-21T15:56:44Z",
+          "updatedAt": "2022-11-21T15:56:44Z"
         }
       ]
     },
@@ -141,7 +148,7 @@
       "labels": [],
       "body": "> It is therefore necessary to decide on the certificate to present during TLS session establishment. To make that decision, the availability of Trusted CA Indication in the client TLS message is important.\r\n>\r\n>It can be considered an important result of the experiment in {{RFC6614}} that Trusted CA Indication is an important asset for inter-connectivity of multiple roaming consortia.\r\n\r\nShould the server also inform the client, which CAs it supports for client auhentication? Do clients have multiple client certificates to choose from for connections? \r\n\r\nBecause the current RFC 6614 and the implementations do not yet support this, I am running a separate Radiator instances in different ports for OpenRoaming and eduroam inbound RadSec connections on our IdP service. ",
       "createdAt": "2022-11-18T11:17:55Z",
-      "updatedAt": "2022-11-18T18:33:44Z",
+      "updatedAt": "2022-11-21T15:25:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -164,6 +171,13 @@
           "body": "I actually have a (admittedly  very specific and unusual) use case right now where it would have helped with CA rollover. (If radsecproxy would support it)\r\nThis would make it possible to switch trust anchors independently on both sides. Once the new certificate is configured on the client, the server can switch at any time to the new trust anchor and the client will then send the new certificate.\r\nRight now this is only possible by either allowing two trust anchors or synchronous config change.\r\n\r\nThe question is: Is there harm in also including the spec for the client side? Maybe modify this in SHOULD/RECOMMENDED for the client to include the trust indication in the ClientHello and MAY/OPTIONAL for the server to indicate allowed client cert CAs?",
           "createdAt": "2022-11-18T18:33:43Z",
           "updatedAt": "2022-11-18T18:33:43Z"
+        },
+        {
+          "author": "restena-sw",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Not sure I get why this would be useful. So a client has two client certificates for the same consortium.\r\n\r\nThe server would usually accept certificates from the old and the new CA, so it doesn't matter which certificate is presented (your \"two trust anchors\" above)\r\n\r\nOnce the old cert expires, the client automatically switches to the then-only certificate for future communication.\r\n\r\nThe only corner case where signalling would be important is if the old CA is removed from the trust base server-side _before_ the old client certificate expires (then the client would erroneously believe it can still use the old, and fail when presenting that).\r\n\r\nTBH, such a situation would make sense only if something terrible has happened to the old CA and it is in need of being decommissioned immediately, without waiting for expiry of its certificates. But yes, such a situation is not impossible.\r\n\r\nSo, to get back to the original question: nothing bad can happen if MAY or OPTIONAL support for this feature is added. So, if there's some value, why not.",
+          "createdAt": "2022-11-21T15:25:58Z",
+          "updatedAt": "2022-11-21T15:25:58Z"
         }
       ]
     }
