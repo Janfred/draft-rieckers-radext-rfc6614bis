@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-22T00:48:52.171633+00:00",
+  "timestamp": "2022-11-27T00:46:46.682508+00:00",
   "repo": "Janfred/draft-rieckers-radext-rfc6614bis",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "I would suggest that this draft would only refer to TLS-PSK standards and comment/document only those RFC 6614 specific decisions and interoperability requirements.",
       "createdAt": "2022-11-18T10:40:38Z",
-      "updatedAt": "2022-11-18T14:33:53Z",
+      "updatedAt": "2022-11-25T18:27:25Z",
       "closedAt": null,
       "comments": [
         {
@@ -71,6 +71,13 @@
           "body": "That makes sense (not just TLS-PSK though, also TLS-RawPublicKeys etc.",
           "createdAt": "2022-11-18T14:33:53Z",
           "updatedAt": "2022-11-18T14:33:53Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "There should be some discussion of how NAS administration interfaces need to allow configuration of TLS-PSK.  There needs to be an identity field, and a PSK field.  The RADIUS shared secret MUST NOT be used for the TLS-PSK.\r\n\r\nThe goal here is not just to explain the technical aspects, but to explain how it's used in the real world.  Without such guidance, NAS vendors do \"inventive\" things.",
+          "createdAt": "2022-11-25T18:27:25Z",
+          "updatedAt": "2022-11-25T18:27:25Z"
         }
       ]
     },
@@ -86,7 +93,7 @@
       "labels": [],
       "body": "From draft:\r\n\r\n> Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presendet certificate. [3](https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/blob/main/draft-rieckers-radext-rfc6614bis.md#user-content-fn-3-f6a9124d71ad00b10225e132b70962fb){:jf} DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries. For verification, only one of these entries is to be considered. The following precedence applies: for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN. Implementors of this specification are advised to read {{?RFC6125}}, Section 6, for more details on DNS name validation.\r\n\r\nI think this should be defined more carefully. We do not want this to be interpreted so that server should always match client's IP address and DNS name to its certificate. Actually this kind of matching should not be in my opinion required since we may for example rely to the fact that the client/peer/server has a certificate from approved CA and we do not really care about the servers DNS name or its IP address -- only that it has a certificate certified by approved CA.",
       "createdAt": "2022-11-18T10:47:28Z",
-      "updatedAt": "2022-11-21T15:56:44Z",
+      "updatedAt": "2022-11-25T18:25:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -102,6 +109,13 @@
           "body": "Well (2) is only about the technicality of the TLS handshake: during the handshake, there is always a server and a client certificate. Situations like typically found in web contexts (server certificate, but no client certificate, and thus no control of client identity) are to be avoided. I think this makes sense and should stay - in a RADIUS environment, clients should not be allowed to remain anonymous.\r\n\r\n(1) is only about support for TLS with server/client certificates, not about actually checking the certificates. I believe this also should stay; we want PKIX-style client+server auth to be a supported mode of operation.\r\n\r\nThe only real question is whether the checks are allowed to be turned off. That's a policy decision by the deployer much more than a technical specification. I understand that the phrase \"Peer validation _always_ includes ...\" reads like a MUST; which it arguably shouldn't.\r\n\r\nMaybe it is better to speak of a list of things a peer CAN look at to verify the other end's identity; and to add that when communicating outside trusted networks one SHOULD verify the identity (or can we even say MUST?).\r\n\r\nStrawman text:\r\n\r\nPeers MUST validate the identity of the respective other end of the connection, unless both ends are inside the same trusted network.\r\n* Both TLS Clients and TLS Servers validate presented certificates against their locally configured trust anchors as per PKIX (RFC5280).\r\n* TLS Clients validate server identity to match their local configuration:\r\n  - if the expected TLS server was configured as a hostname, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate Subject\r\n  - if the expected TLS server was configured as an IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate Subject\r\n  - if the expected TLS server was not configured but discovered as per RFC7585, using DNSSEC for the entire discovery process, the realm which was used as input to the discovery is matched against the presented realm names from the subjectAltName:naiRealm extension; if no such extension is present, the certificate is accepted without further name checks immediately after the RFC5280 trust chain checks.\r\n* TLS Servers validate the incoming certificate against a local database of acceptable clients. The database may enumerate acceptable clients either by IP address or by a name component in the certificate.\r\n   - for clients configured by name, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate Subject\r\n   - for clients configured by their source IP addresses, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate Subject\r\n  - it is possible for the TLS server to not require additional name checks for incoming TLS clients. In this case, the certificate is accepted immediately after the RFC5280 trust chain checks.",
           "createdAt": "2022-11-21T15:56:44Z",
           "updatedAt": "2022-11-21T15:56:44Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "In order to support multiple clients behind a NAT, it should be possible to do peer validation only on the client certificate.  Or other TLS parameters, such as TLS-PSK, etc.\r\n\r\nIt is useful to validate the source IP (or IP range) if you know that there's no NAT.  Doing so can help to discover misconfigurations or unauthorized network changes.\r\n\r\nI find it less useful for a server to check hostnames in client certs.  DNS offers little security, and we shouldn't rely on it for security checks.  Checking hostnames is more useful for client to server connections, because of RFC 7585.\r\n\r\nI would also suggest that the peer always has to be validated, even if both ends are in the same trusted network.  There may be a network change or misconfiguration which \"opens up\" the network.  We don't want to have a domino effect of one security issue allowing an attacker to exploit another one.\r\n\r\nStefan's text looks mostly pretty good.",
+          "createdAt": "2022-11-25T18:25:49Z",
+          "updatedAt": "2022-11-25T18:25:49Z"
         }
       ]
     },
