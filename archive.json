@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-27T00:46:46.682508+00:00",
+  "timestamp": "2022-11-29T00:43:41.826890+00:00",
   "repo": "Janfred/draft-rieckers-radext-rfc6614bis",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "I would suggest that this draft would only refer to TLS-PSK standards and comment/document only those RFC 6614 specific decisions and interoperability requirements.",
       "createdAt": "2022-11-18T10:40:38Z",
-      "updatedAt": "2022-11-25T18:27:25Z",
+      "updatedAt": "2022-11-28T14:07:43Z",
       "closedAt": null,
       "comments": [
         {
@@ -78,6 +78,20 @@
           "body": "There should be some discussion of how NAS administration interfaces need to allow configuration of TLS-PSK.  There needs to be an identity field, and a PSK field.  The RADIUS shared secret MUST NOT be used for the TLS-PSK.\r\n\r\nThe goal here is not just to explain the technical aspects, but to explain how it's used in the real world.  Without such guidance, NAS vendors do \"inventive\" things.",
           "createdAt": "2022-11-25T18:27:25Z",
           "updatedAt": "2022-11-25T18:27:25Z"
+        },
+        {
+          "author": "khuhtanen",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> There should be some discussion of how NAS administration interfaces need to allow configuration of TLS-PSK. There needs to be an identity field, and a PSK field. The RADIUS shared secret MUST NOT be used for the TLS-PSK.\r\n\r\nWould the Design Decisions sub-chapter be a good place for these? Maybe we should add TLS-PSK Considerations there?",
+          "createdAt": "2022-11-28T10:48:54Z",
+          "updatedAt": "2022-11-28T10:48:54Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "On Nov 28, 2022, at 5:49 AM, Karri Huhtanen ***@***.***> wrote:\n> \n> There should be some discussion of how NAS administration interfaces need to allow configuration of TLS-PSK. There needs to be an identity field, and a PSK field. The RADIUS shared secret MUST NOT be used for the TLS-PSK.\n\n  I'd just copy the text from the SRADIUS draft.\n\n> Would the Design Decisions sub-chapter be a good place for these? Maybe we should add TLS-PSK Considerations there?\n\n  It's not really design decisions.  It's more \"how to use TLS-PSK\".\n\n  I'd just add a separate section explicitly discussing TLS-PSK.",
+          "createdAt": "2022-11-28T14:07:43Z",
+          "updatedAt": "2022-11-28T14:07:43Z"
         }
       ]
     },
@@ -93,7 +107,7 @@
       "labels": [],
       "body": "From draft:\r\n\r\n> Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presendet certificate. [3](https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/blob/main/draft-rieckers-radext-rfc6614bis.md#user-content-fn-3-f6a9124d71ad00b10225e132b70962fb){:jf} DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries. For verification, only one of these entries is to be considered. The following precedence applies: for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN. Implementors of this specification are advised to read {{?RFC6125}}, Section 6, for more details on DNS name validation.\r\n\r\nI think this should be defined more carefully. We do not want this to be interpreted so that server should always match client's IP address and DNS name to its certificate. Actually this kind of matching should not be in my opinion required since we may for example rely to the fact that the client/peer/server has a certificate from approved CA and we do not really care about the servers DNS name or its IP address -- only that it has a certificate certified by approved CA.",
       "createdAt": "2022-11-18T10:47:28Z",
-      "updatedAt": "2022-11-25T18:25:50Z",
+      "updatedAt": "2022-11-28T18:57:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -116,6 +130,34 @@
           "body": "In order to support multiple clients behind a NAT, it should be possible to do peer validation only on the client certificate.  Or other TLS parameters, such as TLS-PSK, etc.\r\n\r\nIt is useful to validate the source IP (or IP range) if you know that there's no NAT.  Doing so can help to discover misconfigurations or unauthorized network changes.\r\n\r\nI find it less useful for a server to check hostnames in client certs.  DNS offers little security, and we shouldn't rely on it for security checks.  Checking hostnames is more useful for client to server connections, because of RFC 7585.\r\n\r\nI would also suggest that the peer always has to be validated, even if both ends are in the same trusted network.  There may be a network change or misconfiguration which \"opens up\" the network.  We don't want to have a domino effect of one security issue allowing an attacker to exploit another one.\r\n\r\nStefan's text looks mostly pretty good.",
           "createdAt": "2022-11-25T18:25:49Z",
           "updatedAt": "2022-11-25T18:25:49Z"
+        },
+        {
+          "author": "khuhtanen",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I also think Stefan's suggestion is already pretty good, but I would like it to have a more clear definition of the OpenRoaming use case:\r\n\r\nThe paragraph:\r\n> TLS Servers validate the incoming certificate against a local database of acceptable clients. The database may enumerate acceptable clients either by IP address or by a name component in the certificate.\r\nfor clients configured by name, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate Subject\r\nfor clients configured by their source IP addresses, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate Subject\r\nit is possible for the TLS server to not require additional name checks for incoming TLS clients. In this case, the certificate is accepted immediately after the RFC5280 trust chain checks.\r\n\r\nAnd especially:\r\n> it is possible for the TLS server to not require additional name checks for incoming TLS clients. In this case, the certificate is accepted immediately after the RFC5280 trust chain checks.\r\n\r\nI could interpret the above so that I do not have to implement a case where the verification would happen solely based on the client certificate being signed by an accepted certificate authority. This is the case with for example OpenRoaming Settlement-Free where organisations are free to connect with each other with only checking that the client and server certificates are signed by OpenRoaming root CAs. The TLS server does not really have all the connecting IP addresses or DNS names of the clients in their database then.\r\n\r\nShould we have a third bulleting point for this? Or change the TLS Servers paragraph? I would say that a TLS Servers must be able to validate the connection only by certificate details without additional matching?",
+          "createdAt": "2022-11-28T10:39:03Z",
+          "updatedAt": "2022-11-28T10:39:03Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "The spec should require that verification happens solely based on a correct client certificate being presented.\r\n\r\ni.e. if client and peer MUST do TLS layer authentication (certs, PSK, naked keys).  But after that the client and server MAY do additional checks (subjectAltName is allowed, various OIDs exist or do not, PSK identity matches what's expected)\r\n\r\nWhat should be forbidden is where a client does not authenticate a server, or where a server does not authenticate a client.\r\n\r\nFor me, the paragraph quoted above could be re-written.  Instead of stating details first and TLS requirements last, it could do it the other way around:\r\n\r\n> Clients and servers MUST mutually authenticate each other at the TLS layer.  This authentication can be done via certificates, PSKs, RFC 7250 public keys, etc.  Clients and servers SHOULD perform additional authorization checks of the supplied credentials.  For example, (OIDs exist or not, subjectAltName matches), or PSK identity is known, etc.\r\n>\r\n> A particular set of TLS credentials MUST NOT be used on more than one client.  For example, it is forbidden to use a global PSK identity and PSK across multiple clients, and it is forbidden to use one client certificate on multiple clients.  For reasons of fail-over and load balancing, the opposite is not true. A particular set of TLS credentials can be used in multiple servers.\r\n>\r\n> A server can also perform additional authorization checks based on non-TLS information.  For example, verifying that the client IP address (source IP of the TLS connection) falls within a particular network range, etc.\r\n\r\nThe format here is to explain the high-level concept first: *always authenticate*, and then give additional details as to how that's done.  I also thought it would be worth adding a note re-using credentials, because people will do that if it's not explicitly forbidden.",
+          "createdAt": "2022-11-28T15:51:19Z",
+          "updatedAt": "2022-11-28T15:52:56Z"
+        },
+        {
+          "author": "Janfred",
+          "authorAssociation": "OWNER",
+          "body": "The text for the mutual authentication requirement is good.\r\n\r\nBut I would object to the credential-sharing paragraph.\r\nI agree that it is a bad design if you use the same credentials for multiple devices. But I can image quite a number of use cases where i.e. sharing of TLS-PSK credentials is actually useful.\r\nIt is the same way the RADIUS shared secret is used today: If I have a number of fat APs without a controller, but with some sort of management, I don't want to have a separate shared secret for every AP (this makes the configuration on the AP as well as on my RADIUS server very difficult). I want to authenticate the APs using a generic shared secret and a network rage.\r\n\r\nAs far as I can see we don't need a type of unique client identification, so I think it is acceptable to share secrets among devices in the same administrative domain and policy on the RADIUS server.",
+          "createdAt": "2022-11-28T16:31:58Z",
+          "updatedAt": "2022-11-28T16:31:58Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "The credential sharing is something which will be brought up in a review by the Security Area directorate.   The standard should document best practices.  If you want to ignore those recommendations, you're free to do so. \r\n\r\nBut the standards should explain why it's a terrible idea to re-use credentials.\r\n\r\nFor PSK, each machine should have it's own PSK identity, as that's the purpose of PSK identities.  It might be OK to use the same PSK for multiple machines, and you could then claim that the credentials are different, so long as the PSK identities are different.\r\n\r\nAnd if the provisioning is automated, who cares if the PSKs are different?  The only cost of managing the PSKs is putting them into a database which matches PSK identity -> PSK.",
+          "createdAt": "2022-11-28T18:57:50Z",
+          "updatedAt": "2022-11-28T18:57:50Z"
         }
       ]
     },
