@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-29T00:43:41.826890+00:00",
+  "timestamp": "2022-12-01T00:48:27.934851+00:00",
   "repo": "Janfred/draft-rieckers-radext-rfc6614bis",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "I would suggest that this draft would only refer to TLS-PSK standards and comment/document only those RFC 6614 specific decisions and interoperability requirements.",
       "createdAt": "2022-11-18T10:40:38Z",
-      "updatedAt": "2022-11-28T14:07:43Z",
+      "updatedAt": "2022-11-29T15:32:43Z",
       "closedAt": null,
       "comments": [
         {
@@ -92,6 +92,20 @@
           "body": "On Nov 28, 2022, at 5:49 AM, Karri Huhtanen ***@***.***> wrote:\n> \n> There should be some discussion of how NAS administration interfaces need to allow configuration of TLS-PSK. There needs to be an identity field, and a PSK field. The RADIUS shared secret MUST NOT be used for the TLS-PSK.\n\n  I'd just copy the text from the SRADIUS draft.\n\n> Would the Design Decisions sub-chapter be a good place for these? Maybe we should add TLS-PSK Considerations there?\n\n  It's not really design decisions.  It's more \"how to use TLS-PSK\".\n\n  I'd just add a separate section explicitly discussing TLS-PSK.",
           "createdAt": "2022-11-28T14:07:43Z",
           "updatedAt": "2022-11-28T14:07:43Z"
+        },
+        {
+          "author": "restena-sw",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Asking for a tuple if ID+PSK \"doubles\" the amount of things deployers need to understand and configure. Is there maybe some utility in making the PSK-ID optional; and if omitted, the IP address of the client is used as the PSK-ID?\r\n\r\nThis has obvious limitations for deployments that go beyond local trusted networks (NAT, and the server seeing a different IP than the client had set...) but in small, local-scope deployments this would enable to let admins use PSK as a 1:1 drop-in for what they configured when they had shared secrets.",
+          "createdAt": "2022-11-29T15:19:28Z",
+          "updatedAt": "2022-11-29T15:19:28Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "On Nov 29, 2022, at 10:19 AM, Stefan Winter ***@***.***> wrote:\n> Asking for a tuple if ID+PSK \"doubles\" the amount of things deployers need to understand and configure. Is there maybe some utility in making the PSK-ID optional; and if omitted, the IP address of the client is used as the PSK-ID?\n\n  Yes, that's a hard and annoying problem.  The options here would be:\n\n* IP address (NAT, oops)\n\n* hostname\n\n* what would be sent in NAS-Identifier?\n\n> This has obvious limitations for deployments that go beyond local trusted networks (NAT, and the server seeing a different IP than the client had set...) but in small, local-scope deployments this would enable to let admins use PSK as a 1:1 drop-in for what they configured when they had shared secrets.\n\n  There is a large benefit in that.\n\n  Perhaps the document could say:\n\nSHOULD allow configuration of TLS PSK identity and PSK itself.\n\nOtherwise MUST have a config option for PSK (which makes it clear that it's not the RADIUS shared secret.  It MUST take the PSK identity from some per-NAS identification thing... such as the string which would be used for NAS-Identifier\n\n  Cisco has a document which describes how they choose NAS identifier.\n\nhttps://www.cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/network-access-server-identifier.pdf\n\n  The downside with using things like MAC address is perhaps TLS identity exposure?  But maybe we can depend on TLS to protect that.",
+          "createdAt": "2022-11-29T15:32:43Z",
+          "updatedAt": "2022-11-29T15:32:43Z"
         }
       ]
     },
@@ -107,7 +121,7 @@
       "labels": [],
       "body": "From draft:\r\n\r\n> Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presendet certificate. [3](https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/blob/main/draft-rieckers-radext-rfc6614bis.md#user-content-fn-3-f6a9124d71ad00b10225e132b70962fb){:jf} DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries. For verification, only one of these entries is to be considered. The following precedence applies: for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN. Implementors of this specification are advised to read {{?RFC6125}}, Section 6, for more details on DNS name validation.\r\n\r\nI think this should be defined more carefully. We do not want this to be interpreted so that server should always match client's IP address and DNS name to its certificate. Actually this kind of matching should not be in my opinion required since we may for example rely to the fact that the client/peer/server has a certificate from approved CA and we do not really care about the servers DNS name or its IP address -- only that it has a certificate certified by approved CA.",
       "createdAt": "2022-11-18T10:47:28Z",
-      "updatedAt": "2022-11-28T18:57:50Z",
+      "updatedAt": "2022-11-29T15:24:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -158,6 +172,27 @@
           "body": "The credential sharing is something which will be brought up in a review by the Security Area directorate.   The standard should document best practices.  If you want to ignore those recommendations, you're free to do so. \r\n\r\nBut the standards should explain why it's a terrible idea to re-use credentials.\r\n\r\nFor PSK, each machine should have it's own PSK identity, as that's the purpose of PSK identities.  It might be OK to use the same PSK for multiple machines, and you could then claim that the credentials are different, so long as the PSK identities are different.\r\n\r\nAnd if the provisioning is automated, who cares if the PSKs are different?  The only cost of managing the PSKs is putting them into a database which matches PSK identity -> PSK.",
           "createdAt": "2022-11-28T18:57:50Z",
           "updatedAt": "2022-11-28T18:57:50Z"
+        },
+        {
+          "author": "khuhtanen",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The spec should require that verification happens solely based on a correct client certificate being presented.\r\n> \r\n> i.e. if client and peer MUST do TLS layer authentication (certs, PSK, naked keys). But after that the client and server MAY do additional checks (subjectAltName is allowed, various OIDs exist or do not, PSK identity matches what's expected)\r\n> \r\n> What should be forbidden is where a client does not authenticate a server, or where a server does not authenticate a client.\r\n\r\nI agree with the above.\r\n\r\n> For me, the paragraph quoted above could be re-written. Instead of stating details first and TLS requirements last, it could do it the other way around:\r\n> \r\n> > Clients and servers MUST mutually authenticate each other at the TLS layer.  This authentication can be done via certificates, PSKs, RFC 7250 public keys, etc.  Clients and servers SHOULD perform additional authorization checks of the supplied credentials.  For example, (OIDs exist or not, subjectAltName matches), or PSK identity is known, etc.\r\n\r\nThe above is ok as well.\r\n\r\n> > A particular set of TLS credentials MUST NOT be used on more than one client.  For example, it is forbidden to use a global PSK identity and PSK across multiple clients, and it is forbidden to use one client certificate on multiple clients.  For reasons of fail-over and load balancing, the opposite is not true. A particular set of TLS credentials can be used in multiple servers.\r\n\r\nFor the above paragraph I am not clear about this sentence: \"For reasons of fail-over and load balancing, the opposite is not true.\" I think the 'not' should be removed there, if the idea is to allow using e.g. the same certificate for fail-over and load-balancing purposes. \r\n\r\nMaybe this could also be rephrased to cover Janfred's use case although I agree that multiple PSKs stored in the database would solve the issue. I am also thinking if SHOULD NOT instead of MUST NOT would be sufficient and acceptable, but I have not reached a conclusion about it.\r\n\r\n> > A server can also perform additional authorization checks based on non-TLS information.  For example, verifying that the client IP address (source IP of the TLS connection) falls within a particular network range, etc.\r\n\r\nI agree with this.\r\n\r\n> The format here is to explain the high-level concept first: _always authenticate_, and then give additional details as to how that's done. I also thought it would be worth adding a note re-using credentials, because people will do that if it's not explicitly forbidden.\r\n\r\nI don't think we want in the actual protocol to implement the checks needed for verifying that same credentials are used only once so I would argue that these kind of requirements would be commented in a separate operational section perhaps with SHOULD/SHOULD NOT level requirement?",
+          "createdAt": "2022-11-29T07:37:03Z",
+          "updatedAt": "2022-11-29T07:37:03Z"
+        },
+        {
+          "author": "alandekok",
+          "authorAssociation": "NONE",
+          "body": "\nOn Nov 29, 2022, at 2:37 AM, Karri Huhtanen ***@***.***> wrote:\n> For the above paragraph I am not clear about this sentence: \"For reasons of fail-over and load balancing, the opposite is not true.\" I think the 'not' should be removed there, if the idea is to allow using e.g. the same certificate for fail-over and load-balancing purposes.\n\n  Yes, it's a little unclear.  The goal is to say that individual servers *can* re-use the same certificate.  Because servers in a load-balance pool are all logically the \"same\" server, and are presenting the same identity.\n\n  In contrast, every NAS is different.  There is no reason to re-use the same identity on multiple NASes.\n\n> Maybe this could also be rephrased to cover Janfred's use case although I agree that multiple PSKs stored in the database would solve the issue. I am also thinking if SHOULD NOT instead of MUST NOT would be sufficient and acceptable, but I have not reached a conclusion about it.\n\n  My preference is to make the standards as secure as possible.  That way people can still ignore the standard, but they've been warned about the consequences.\n\n> The format here is to explain the high-level concept first: always authenticate, and then give additional details as to how that's done. I also thought it would be worth adding a note re-using credentials, because people will do that if it's not explicitly forbidden.\n> \n> I don't think we want in the actual protocol to implement the checks needed for verifying that same credentials are used only once so I would argue that these kind of requirements would be commented in a separate operational section perhaps with SHOULD/SHOULD NOT level requirement?\n\n  Sure.  It's difficult for the server to know if the credentials have been reused.\n\n\n",
+          "createdAt": "2022-11-29T07:51:12Z",
+          "updatedAt": "2022-11-29T07:51:12Z"
+        },
+        {
+          "author": "restena-sw",
+          "authorAssociation": "COLLABORATOR",
+          "body": "FWIW, the text suggestion from Alan sounds good to me.\r\n\r\nOne could move text about credential sharing to Security Considerations maybe?",
+          "createdAt": "2022-11-29T15:24:54Z",
+          "updatedAt": "2022-11-29T15:24:54Z"
         }
       ]
     },
