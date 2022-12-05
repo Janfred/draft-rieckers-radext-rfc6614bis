@@ -104,8 +104,8 @@ TLS-PSK support:
 : {{RFC6614}} lists support for TLS-PSK as OPTIONAL, this document changes this to RECOMMENDED.
 
 Mandatory-to-implement(MTI) cipher suites:
-: Following the recommendation from {{!RFC7525}}, the RC4 cipher suite is no longer included as SHOULD, and the AES cipher suite is the new MTI cipher suite, since it is the MTI cipher suite from TLS 1.2.
-  Additionally, this document references {{RFC7525}} for further recommendations for cipher suites.
+: Following the recommendation from {{!RFC9325}}, the RC4 cipher suite is no longer included as SHOULD, and the AES cipher suite is the new MTI cipher suite, since it is the MTI cipher suite from TLS 1.2.
+  Additionally, this document references {{RFC9325}} for further recommendations for cipher suites.
 
 The following things will change in future versions of this draft:
 
@@ -142,7 +142,7 @@ The following restrictions apply:
 * The RADIUS/TLS nodes MUST NOT negotiate compression.
 * When using TLS 1.3, RADIUS/TLS nodes MUST NOT use early data ({{RFC8446}}, Section 2.3)
 * RADIUS/TLS nodes SHOULD support TLS-PSK mutual authentication {{!RFC4279}}
-* RADIUS/TLS implementations MUST, at minimum, support negotiation of the TLS_RSA_WITH_AES_128_CBC_SHA cipher suite and SHOULD follow the recommendations for supported cipher suites in {{RFC7525}}, Section 4.
+* RADIUS/TLS implementations MUST, at minimum, support negotiation of the TLS_RSA_WITH_AES_128_CBC_SHA cipher suite and SHOULD follow the recommendations for supported cipher suites in {{RFC9325}}, Section 4.
 * In addition, RADIUS/TLS implementations MUST support negotiation of the mandatory-to-implement cipher suites required by the versions of TLS they support.
 
 [^1]: To me, it is not exactly clear if RADIUS/TLS implementations only need to support it or if the nodes actually need to do it (e.g. if it is allowed to configure a client to accept anonymous clients)
@@ -287,7 +287,7 @@ Readers of this document who are considering the deployment of DNS-based dynamic
 
 ## Cipher Suites and Compression Negotiation Considerations
 
-See {{RFC7525}} for considerations regarding the cipher suites and negotiation.
+See {{RFC9325}} for considerations regarding the cipher suites and negotiation.
 
 ## RADIUS Datagram Considerations
 {: #datagram_considerations }
