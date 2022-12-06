@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-12-01T00:48:27.934851+00:00",
+  "timestamp": "2022-12-06T00:39:06.897990+00:00",
   "repo": "Janfred/draft-rieckers-radext-rfc6614bis",
   "labels": [
     {
@@ -315,6 +315,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOIOD3rM5EU4kK",
+      "title": "Add text for peer validation.",
+      "url": "https://github.com/Janfred/draft-rieckers-radext-rfc6614bis/pull/6",
+      "state": "OPEN",
+      "author": "Janfred",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Contains primarily text for certificate based validation, text for TLS-PSK/Raw Public Key/... has not yet been added\r\n\r\nText suggestions are coming from #3 \r\n\r\nStill one TODOs to resolve #3:\r\n\r\n* [ ] Build consensus about credential sharing. Options:\r\n  * include a \"MUST NOT share credentials\" in the normative text\r\n  * include a \"SHOULD NOT share credentials\" in the normative text\r\n  * add a paragraph about credential sharing to the security considerations.",
+      "createdAt": "2022-12-05T10:46:52Z",
+      "updatedAt": "2022-12-05T10:46:52Z",
+      "baseRepository": "Janfred/draft-rieckers-radext-rfc6614bis",
+      "baseRefName": "main",
+      "baseRefOid": "81b94d2f7e3cbec640ca5fb3b6a812353c1b2ec3",
+      "headRepository": "Janfred/draft-rieckers-radext-rfc6614bis",
+      "headRefName": "peer_validation",
+      "headRefOid": "f401df0b1ab59051a95a9a682091a5f2699298f8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
