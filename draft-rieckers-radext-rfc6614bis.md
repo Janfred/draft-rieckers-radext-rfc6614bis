@@ -135,7 +135,7 @@ After completing the TCP handshake, the RADIUS/TLS nodes immediately negotiate a
 The following restrictions apply:
 
 * Support for TLS 1.2 {{!RFC5246}} is REQUIRED, support for TLS 1.3 {{!RFC8446}} is RECOMMENDED.
-  RADIUS/TLS nodes MUST NOT negotiate TLS versions prior to TLS 1.2
+  RADIUS/TLS nodes MUST NOT negotiate TLS versions prior to TLS 1.2.
 * Support for certificate-based mutual authentication is REQUIRED.[^1]{:jf}
 * Negotiation of mutual authentication is REQUIRED.[^2]{:jf}
 * The RADIUS/TLS nodes MUST NOT offer or negotiate cipher suites which do not provide confidentiality and integrity protection.
@@ -180,7 +180,7 @@ When implementing this model, support for SHA-1 as hash algorithm for the finger
 
 ### Authentication using TLS-PSK
 
-The support for TLS-PSK is OPTIONAL.[^6]{:jf}
+RADIUS/TLS implementations SHOULD support the use of TLS-PSK.
 
 ### Authentication using Raw Public Keys
 
@@ -189,7 +189,6 @@ RADIUS/TLS implementations SHOULD support using Raw Public Keys {{!RFC7250}} for
 [^3]: This sentence does not include an RFC2119 modifier. Should be fixed.
 [^4]: Maybe usage of CN should be deprecated here?
 [^5]: Replace may with should here?
-[^6]: Here more text for the requirements of TLS-PSK is needed. Maybe we also should move this from optional to recommended.
 [^rpk]: TODO: More text here.
 
 ## Connecting Client Identity
@@ -200,7 +199,7 @@ This practice is inherently insecure, as noted in {{?RFC5247}}, Section 5.3.2.
 
 Following the different authentication modes presented in {{TLSPeerAuth}}, the identification of clients can be done by different means:
 
-In TLS-PSK operation, a client is uniquely identified by its TLS identifier.
+In TLS-PSK operation, a client is uniquely identified by its PSK Identity.
 
 When using certificate fingerprints, a client is uniquely identified by the fingerprint of the presented client certificate.
 
@@ -224,9 +223,7 @@ As a suggestion, at least the following parameters of the X.509 client certifica
 For TLS-PSK operation, at least the following parameters of the TLS connection should be exposed:
 
 * Originating IP address
-* TLS Identifier [^7]{:jf}
-
-[^7]: Should this not be PSK Identifier? (The line was copied directly from RFC6614)
+* PSK Identity
 
 ## RADIUS Datagrams
 
