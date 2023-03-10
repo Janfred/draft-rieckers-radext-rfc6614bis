@@ -1079,8 +1079,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
-      <div class="author-name">J.-F. Rieckers, <span class="editor">Ed.</span>
-</div>
+      <div class="author-name">J.-F. Rieckers</div>
 <div class="org">DFN</div>
 </div>
 <div class="author">
@@ -1390,21 +1389,15 @@ The following restrictions apply:<a href="#section-2.2-2" class="pilcrow">¶</a>
 <li class="normal" id="section-2.2-3.1">Support for TLS 1.2 <span>[<a href="#RFC5246" class="cite xref">RFC5246</a>]</span> is <span class="bcp14">REQUIRED</span>, support for TLS 1.3 <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span> is <span class="bcp14">RECOMMENDED</span>.
 RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> negotiate TLS versions prior to TLS 1.2.<a href="#section-2.2-3.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.2-3.2">Support for certificate-based mutual authentication is <span class="bcp14">REQUIRED</span>.<span class="cref" id="_1">To me, it is not exactly clear if RADIUS/TLS implementations only need to support it or if the nodes actually need to do it (e.g. if it is allowed to configure a client to accept anonymous clients)<span class="crefSource">Janfred</span></span><a href="#section-2.2-3.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.2-3.2">The RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> offer or negotiate cipher suites which do not provide confidentiality and integrity protection.<a href="#section-2.2-3.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.2-3.3">Negotiation of mutual authentication is <span class="bcp14">REQUIRED</span>.<span class="cref" id="_2">Same comment as before.<span class="crefSource">Janfred</span></span><a href="#section-2.2-3.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.2-3.3">The RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> negotiate compression.<a href="#section-2.2-3.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.2-3.4">The RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> offer or negotiate cipher suites which do not provide confidentiality and integrity protection.<a href="#section-2.2-3.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.2-3.4">When using TLS 1.3, RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> use early data (<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, Section 2.3)<a href="#section-2.2-3.4" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.2-3.5">The RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> negotiate compression.<a href="#section-2.2-3.5" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.2-3.5">RADIUS/TLS implementations <span class="bcp14">MUST</span>, at minimum, support negotiation of the TLS_RSA_WITH_AES_128_CBC_SHA cipher suite and <span class="bcp14">SHOULD</span> follow the recommendations for supported cipher suites in <span>[<a href="#RFC9325" class="cite xref">RFC9325</a>]</span>, Section 4.<a href="#section-2.2-3.5" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.2-3.6">When using TLS 1.3, RADIUS/TLS nodes <span class="bcp14">MUST NOT</span> use early data (<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, Section 2.3)<a href="#section-2.2-3.6" class="pilcrow">¶</a>
-</li>
-          <li class="normal" id="section-2.2-3.7">RADIUS/TLS nodes <span class="bcp14">SHOULD</span> support TLS-PSK mutual authentication <span>[<a href="#RFC4279" class="cite xref">RFC4279</a>]</span><a href="#section-2.2-3.7" class="pilcrow">¶</a>
-</li>
-          <li class="normal" id="section-2.2-3.8">RADIUS/TLS implementations <span class="bcp14">MUST</span>, at minimum, support negotiation of the TLS_RSA_WITH_AES_128_CBC_SHA cipher suite and <span class="bcp14">SHOULD</span> follow the recommendations for supported cipher suites in <span>[<a href="#RFC9325" class="cite xref">RFC9325</a>]</span>, Section 4.<a href="#section-2.2-3.8" class="pilcrow">¶</a>
-</li>
-          <li class="normal" id="section-2.2-3.9">In addition, RADIUS/TLS implementations <span class="bcp14">MUST</span> support negotiation of the mandatory-to-implement cipher suites required by the versions of TLS they support.<a href="#section-2.2-3.9" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.2-3.6">In addition, RADIUS/TLS implementations <span class="bcp14">MUST</span> support negotiation of the mandatory-to-implement cipher suites required by the versions of TLS they support.<a href="#section-2.2-3.6" class="pilcrow">¶</a>
 </li>
         </ul>
 <p id="section-2.2-4">Details for peer authentication are described in <a href="#TLSPeerAuth" class="auto internal xref">Section 2.3</a>.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
@@ -1417,7 +1410,9 @@ The shared secret to compute the (obsolete) MD5 integrity checks and attribute o
         <h3 id="name-tls-peer-authentication">
 <a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-tls-peer-authentication" class="section-name selfRef">TLS Peer Authentication</a>
         </h3>
-<p id="section-2.3-1">The authentication of peers can be done using different models, that will be described here.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<p id="section-2.3-1">Peers <span class="bcp14">MUST</span> mutually authenticate each other at the TLS layer.
+The authentication of peers can be done using different models, that will be described here.
+Peers can also perform additional authorization checks based on non-TLS information. For example, verifying that the client IP address (source IP address of the TLS connection) falls within a particular network range.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
 <div id="authentication-using-x509-certificates-with-pkix-trust-model">
 <section id="section-2.3.1">
           <h4 id="name-authentication-using-x509-c">
@@ -1431,16 +1426,40 @@ The shared secret to compute the (obsolete) MD5 integrity checks and attribute o
 </li>
             <li class="normal" id="section-2.3.1-2.3">Implementations <span class="bcp14">SHOULD</span> indicate their trusted Certification Authorities (CAs). See <span>[<a href="#RFC5246" class="cite xref">RFC5246</a>]</span>, Section 7.4.4 and <span>[<a href="#RFC6066" class="cite xref">RFC6066</a>]</span>, Section 6 for TLS 1.2 and <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, Section 4.2.4 for TLS 1.3.<a href="#section-2.3.1-2.3" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-2.3.1-2.4">Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presented certificate. <span class="cref" id="_3">This sentence does not include an RFC2119 modifier. Should be fixed.<span class="crefSource">Janfred</span></span>
-DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries.
-For verification, only one of these entries is to be considered.
-The following precedence applies:
-for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN.
-Implementors of this specification are advised to read <span>[<a href="#RFC6125" class="cite xref">RFC6125</a>]</span>, Section 6, for more details on DNS name validation. <span class="cref" id="_4">Maybe usage of CN should be deprecated here?<span class="crefSource">Janfred</span></span><a href="#section-2.3.1-2.4" class="pilcrow">¶</a>
+            <li class="normal" id="section-2.3.1-2.4">
+              <p id="section-2.3.1-2.4.1">RADIUS/TLS clients validate the server identity to match their local configuration:<a href="#section-2.3.1-2.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.3.1-2.4.2.1">If the expected RADIUS/TLS server was configured as a hostname, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate subject.<a href="#section-2.3.1-2.4.2.1" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-2.3.1-2.5">Implementations <span class="bcp14">MAY</span> allow the configuration of a set of additional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).<a href="#section-2.3.1-2.5" class="pilcrow">¶</a>
+                <li class="normal" id="section-2.3.1-2.4.2.2">If the expected RADIUS/TLS server was configured as an IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate subject.<a href="#section-2.3.1-2.4.2.2" class="pilcrow">¶</a>
 </li>
-            <li class="normal" id="section-2.3.1-2.6">When the configured trust base changes (e.g., removal of a CA from the list of trusted CAs; issuance of a new CRL for a given CA), implementations <span class="bcp14">MAY</span> renegotiate the TLS session to reassess the connecting peer's continued authorization.<span class="cref" id="_5">Replace may with should here?<span class="crefSource">Janfred</span></span><a href="#section-2.3.1-2.6" class="pilcrow">¶</a>
+                <li class="normal" id="section-2.3.1-2.4.2.3">
+                  <p id="section-2.3.1-2.4.2.3.1">If the expected RADIUS/TLS server was not configured but discovered as per <span>[<a href="#RFC7585" class="cite xref">RFC7585</a>]</span>, the peer executes the following checks in this order, accepting the certificate on the first match:<a href="#section-2.3.1-2.4.2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.3.1-2.4.2.3.2.1">The realm which was used as input to the discovery is matched against the presented realm names from the subjectAltName:naiRealm extension.<a href="#section-2.3.1-2.4.2.3.2.1" class="pilcrow">¶</a>
+</li>
+                    <li class="normal" id="section-2.3.1-2.4.2.3.2.2">If the discovery process yielded a hostname, this hostname is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate subject. Implementations <span class="bcp14">MAY</span> require the use of DNSSEC <span>[<a href="#RFC4033" class="cite xref">RFC4033</a>]</span> to ensure the authenticity of the DNS result before relying on this for trust checks.<a href="#section-2.3.1-2.4.2.3.2.2" class="pilcrow">¶</a>
+</li>
+                    <li class="normal" id="section-2.3.1-2.4.2.3.2.3">If the previous checks fail, the certificate <span class="bcp14">MAY</span> be accepted without further name checks immediately after the <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span> trust chain checks.<a href="#section-2.3.1-2.4.2.3.2.3" class="pilcrow">¶</a>
+</li>
+                  </ul>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-2.3.1-2.5">
+              <p id="section-2.3.1-2.5.1">RADIUS/TLS server validate the incoming certificate against a local database of acceptable clients. The database may enumerate acceptable clients either by IP address or by a name component in the certificate.<a href="#section-2.3.1-2.5.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.3.1-2.5.2.1">For clients configured by name, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exists, against the presented CN component in the certificate subject.<a href="#section-2.3.1-2.5.2.1" class="pilcrow">¶</a>
+</li>
+                <li class="normal" id="section-2.3.1-2.5.2.2">For clients configured by their source IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate subject.<a href="#section-2.3.1-2.5.2.2" class="pilcrow">¶</a>
+</li>
+                <li class="normal" id="section-2.3.1-2.5.2.3">It is possible for a RADIUS/TLS server to not require additional name checks for incoming RADIUS/TLS clients. In this case, the certificate is accepted immediately after the <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span> trust chain checks. This <span class="bcp14">MUST NOT</span> be used outside of trusted network environments or without additional certificate attribute checks in place.<a href="#section-2.3.1-2.5.2.3" class="pilcrow">¶</a>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-2.3.1-2.6">Implementations <span class="bcp14">MAY</span> allow the configuration of a set of additional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).<a href="#section-2.3.1-2.6" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-2.3.1-2.7">When the configured trust base changes (e.g., removal of a CA from the list of trusted CAs; issuance of a new CRL for a given CA), implementations <span class="bcp14">MAY</span> renegotiate the TLS session to reassess the connecting peer's continued authorization.<span class="cref" id="_5">Replace may with should here?<span class="crefSource">Janfred</span></span><a href="#section-2.3.1-2.7" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
@@ -1484,32 +1503,33 @@ This practice is inherently insecure, as noted in <span>[<a href="#RFC5247" clas
 <p id="section-2.4-3">In TLS-PSK operation, a client is uniquely identified by its PSK Identity.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
 <p id="section-2.4-4">When using certificate fingerprints, a client is uniquely identified by the fingerprint of the presented client certificate.<a href="#section-2.4-4" class="pilcrow">¶</a></p>
 <p id="section-2.4-5">When using X.509 certificates with a PKIX trust model, a client is uniquely identified by the tuple of the serial number of the presended client certificate and the issuer of the client certificate.<a href="#section-2.4-5" class="pilcrow">¶</a></p>
-<p id="section-2.4-6">Note well: having identified a connecting entity does not mean the server necessarily wants to communicate with that client.
-For example, if the issuer is not in a trusted set of issuers, the server may decline to perform RADIUS transactions with this client.<a href="#section-2.4-6" class="pilcrow">¶</a></p>
-<p id="section-2.4-7">There are numerous trust models in PKIX environments, and it is beyond the scope of this document to define how a particular deployment determines whether a client is trustworthy.
+<p id="section-2.4-6"><span class="cref" id="rpk-id">TODO: Client identity when using Raw Public Key needs to be described here.<span class="crefSource">Janfred</span></span><a href="#section-2.4-6" class="pilcrow">¶</a></p>
+<p id="section-2.4-7">Note well: having identified a connecting entity does not mean the server necessarily wants to communicate with that client.
+For example, if the issuer is not in a trusted set of issuers, the server may decline to perform RADIUS transactions with this client.<a href="#section-2.4-7" class="pilcrow">¶</a></p>
+<p id="section-2.4-8">There are numerous trust models in PKIX environments, and it is beyond the scope of this document to define how a particular deployment determines whether a client is trustworthy.
 Implementations that want to support a wide variety of trust models should expose as many details of the presented certificate to the administrator as possible so that the trust model can be implemented by the administrator.
-As a suggestion, at least the following parameters of the X.509 client certificate should be exposed:<a href="#section-2.4-7" class="pilcrow">¶</a></p>
+As a suggestion, at least the following parameters of the X.509 client certificate should be exposed:<a href="#section-2.4-8" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-2.4-8.1">Originating IP address<a href="#section-2.4-8.1" class="pilcrow">¶</a>
+<li class="normal" id="section-2.4-9.1">Originating IP address<a href="#section-2.4-9.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-8.2">Certificate Fingerprint<a href="#section-2.4-8.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-9.2">Certificate Fingerprint<a href="#section-2.4-9.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-8.3">Issuer<a href="#section-2.4-8.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-9.3">Issuer<a href="#section-2.4-9.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-8.4">Subject<a href="#section-2.4-8.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-9.4">Subject<a href="#section-2.4-9.4" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-8.5">all X.509v3 Extended Key Usage<a href="#section-2.4-8.5" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-9.5">all X.509v3 Extended Key Usage<a href="#section-2.4-9.5" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-8.6">all X.509v3 Subject Alternative Name<a href="#section-2.4-8.6" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-9.6">all X.509v3 Subject Alternative Name<a href="#section-2.4-9.6" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-8.7">all X.509v3 Certificate Policies<a href="#section-2.4-8.7" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-9.7">all X.509v3 Certificate Policies<a href="#section-2.4-9.7" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-2.4-9">For TLS-PSK operation, at least the following parameters of the TLS connection should be exposed:<a href="#section-2.4-9" class="pilcrow">¶</a></p>
+<p id="section-2.4-10">For TLS-PSK operation, at least the following parameters of the TLS connection should be exposed:<a href="#section-2.4-10" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-2.4-10.1">Originating IP address<a href="#section-2.4-10.1" class="pilcrow">¶</a>
+<li class="normal" id="section-2.4-11.1">Originating IP address<a href="#section-2.4-11.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.4-10.2">PSK Identity<a href="#section-2.4-10.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.4-11.2">PSK Identity<a href="#section-2.4-11.2" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
@@ -1728,9 +1748,10 @@ The situation should be avoided by disabling the weaker RADIUS/UDP transport as 
 In the presence of proxies, the intermediate proxies can still inspect the individual RADIUS packets, i.e., "end-to-end" encryption is not provided.
 Where intermediate proxies are untrusted, it is desirable to use other RADIUS mechanisms to prevent RADIUS packet payload from inspection by such proxies.
 One common method to protect passwords is the use of the Extensible Authentication Protocol (EAP) and EAP methods that utilize TLS.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">When using certificate fingerprints to identify RADIUS/TLS peers, any two certificates that produce the same hash value (i.e., that have a hash collision) will be considered the same client.
+<p id="section-5-5">For dynamic discovery, this document allows the acceptance of a certificate only after doing PKIX checks. When using publicly trusted CAs as trust anchor, this may lead to security issues, since an advisary may easily get a valid certificate from this CAs. In current practice of <span>[<a href="#RFC6614" class="cite xref">RFC6614</a>]</span>, this problem is circumvented by using a private CA as a trust anchor. This private CA only issues certificate to members of the roaming consortium. This may still enable a malicious member to intercept traffic not intended for them, however, depending on the size of the consortium, this attack vector may be negligible. If the private CA also issues certificates for other purposes than RADIUS/TLS, the RADIUS/TLS certificates <span class="bcp14">SHOULD</span> include RADIUS/TLS-specific attributes against the implementation can check such as a X.509v3 Certificate Policy specific for RADIUS/TLS.<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-6">When using certificate fingerprints to identify RADIUS/TLS peers, any two certificates that produce the same hash value (i.e., that have a hash collision) will be considered the same client.
 Therefore, it is important to make sure that the hash function used is cryptographically uncompromised so that an attacker is very unlikely to be able to produce a hash collision with a certificate of his choice.
-While this specification mandates support for SHA-1, a later revision will likely demand support for more contemporary hash functions because as of issuance of this document, there are already attacks on SHA-1.<a href="#section-5-5" class="pilcrow">¶</a></p>
+While this specification mandates support for SHA-1, a later revision will likely demand support for more contemporary hash functions because as of issuance of this document, there are already attacks on SHA-1.<a href="#section-5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1774,10 +1795,6 @@ While this specification mandates support for SHA-1, a later revision will likel
         <dd>
 <span class="refAuthor">Rigney, C.</span>, <span class="refTitle">"RADIUS Accounting"</span>, <span class="seriesInfo">RFC 2866</span>, <span class="seriesInfo">DOI 10.17487/RFC2866</span>, <time datetime="2000-06" class="refDate">June 2000</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2866">https://www.rfc-editor.org/rfc/rfc2866</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC4279">[RFC4279]</dt>
-        <dd>
-<span class="refAuthor">Eronen, P., Ed.</span> and <span class="refAuthor">H. Tschofenig, Ed.</span>, <span class="refTitle">"Pre-Shared Key Ciphersuites for Transport Layer Security (TLS)"</span>, <span class="seriesInfo">RFC 4279</span>, <span class="seriesInfo">DOI 10.17487/RFC4279</span>, <time datetime="2005-12" class="refDate">December 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4279">https://www.rfc-editor.org/rfc/rfc4279</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC5246">[RFC5246]</dt>
         <dd>
 <span class="refAuthor">Dierks, T.</span> and <span class="refAuthor">E. Rescorla</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.2"</span>, <span class="seriesInfo">RFC 5246</span>, <span class="seriesInfo">DOI 10.17487/RFC5246</span>, <time datetime="2008-08" class="refDate">August 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5246">https://www.rfc-editor.org/rfc/rfc5246</a>&gt;</span>. </dd>
@@ -1817,6 +1834,10 @@ While this specification mandates support for SHA-1, a later revision will likel
 <a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
+<dt id="RFC4033">[RFC4033]</dt>
+        <dd>
+<span class="refAuthor">Arends, R.</span>, <span class="refAuthor">Austein, R.</span>, <span class="refAuthor">Larson, M.</span>, <span class="refAuthor">Massey, D.</span>, and <span class="refAuthor">S. Rose</span>, <span class="refTitle">"DNS Security Introduction and Requirements"</span>, <span class="seriesInfo">RFC 4033</span>, <span class="seriesInfo">DOI 10.17487/RFC4033</span>, <time datetime="2005-03" class="refDate">March 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4033">https://www.rfc-editor.org/rfc/rfc4033</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC4953">[RFC4953]</dt>
         <dd>
 <span class="refAuthor">Touch, J.</span>, <span class="refTitle">"Defending TCP Against Spoofing Attacks"</span>, <span class="seriesInfo">RFC 4953</span>, <span class="seriesInfo">DOI 10.17487/RFC4953</span>, <time datetime="2007-07" class="refDate">July 2007</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4953">https://www.rfc-editor.org/rfc/rfc4953</a>&gt;</span>. </dd>
@@ -1828,10 +1849,6 @@ While this specification mandates support for SHA-1, a later revision will likel
 <dt id="RFC5247">[RFC5247]</dt>
         <dd>
 <span class="refAuthor">Aboba, B.</span>, <span class="refAuthor">Simon, D.</span>, and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"Extensible Authentication Protocol (EAP) Key Management Framework"</span>, <span class="seriesInfo">RFC 5247</span>, <span class="seriesInfo">DOI 10.17487/RFC5247</span>, <time datetime="2008-08" class="refDate">August 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5247">https://www.rfc-editor.org/rfc/rfc5247</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC6125">[RFC6125]</dt>
-        <dd>
-<span class="refAuthor">Saint-Andre, P.</span> and <span class="refAuthor">J. Hodges</span>, <span class="refTitle">"Representation and Verification of Domain-Based Application Service Identity within Internet Public Key Infrastructure Using X.509 (PKIX) Certificates in the Context of Transport Layer Security (TLS)"</span>, <span class="seriesInfo">RFC 6125</span>, <span class="seriesInfo">DOI 10.17487/RFC6125</span>, <time datetime="2011-03" class="refDate">March 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6125">https://www.rfc-editor.org/rfc/rfc6125</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC6614">[RFC6614]</dt>
         <dd>
@@ -1937,7 +1954,7 @@ Hopefully the differences to <span>[<a href="#RFC6614" class="cite xref">RFC6614
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Jan-Frederik Rieckers (<span class="role">editor</span>)</span></div>
+        <div dir="auto" class="left"><span class="fn nameRole">Jan-Frederik Rieckers</span></div>
 <div dir="auto" class="left"><span class="org">Deutsches Forschungsnetz | German National Research and Education Network</span></div>
 <div dir="auto" class="left"><span class="street-address">Alexanderplatz 1</span></div>
 <div dir="auto" class="left">
