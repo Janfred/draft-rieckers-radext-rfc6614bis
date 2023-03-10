@@ -28,7 +28,6 @@ author:
     email: rieckers@dfn.de
     abbrev: DFN
     uri: www.dfn.de
-    role: editor
   - name: Stefan Winter
     org: Fondation Restena | Restena Foundation
     street: 2, avenue de l'Université
@@ -164,7 +163,10 @@ All RADIUS/TLS implementations MUST implement this model, following the followin
 * RADIUS/TLS clients validate the server identity to match their local configuration:
   * If the expected RADIUS/TLS server was configured as a hostname, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate subject.
   * If the expected RADIUS/TLS server was configured as an IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate subject.
-  * If the expected RADIUS/TLS server was not configured but discovered as per {{RFC7585}}, the realm which was used as input to the discovery is matched against the presented realm names from the subjectAltName:naiRealm extension; if no such extension is present, the certificate is accepted without further name checks immediately after the {{RFC5280}} trust chain checks.[^discovery]{:jf}
+  * If the expected RADIUS/TLS server was not configured but discovered as per {{RFC7585}}, the peer executes the following checks in this order, accepting the certificate on the first match:
+    * The realm which was used as input to the discovery is matched against the presented realm names from the subjectAltName:naiRealm extension.
+    * If the discovery process yielded a hostname, this hostname is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate subject. Implementations MAY require the use of DNSSEC {{?RFC4033}} to ensure the authenticity of the DNS result before relying on this for trust checks.
+    * If the previous checks fail, the certificate MAY be accepted without further name checks immediately after the {{RFC5280}} trust chain checks.
 * RADIUS/TLS server validate the incoming certificate against a local database of acceptable clients. The database may enumerate acceptable clients either by IP address or by a name component in the certificate.
   * For clients configured by name, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exists, against the presented CN component in the certificate subject.
   * For clients configured by their source IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate subject.
@@ -185,7 +187,6 @@ RADIUS/TLS implementations SHOULD support the use of TLS-PSK.
 
 RADIUS/TLS implementations SHOULD support using Raw Public Keys {{!RFC7250}} for mutual authentication.[^rpk]{:jf}
 
-[^discovery]: The discovery may output a SRV record with hostnames. Maybe it is a good idea to check against those hostnames in addition to the NAIRealm.
 [^5]: Replace may with should here?
 [^rpk]: TODO: More text here.
 
@@ -202,6 +203,10 @@ In TLS-PSK operation, a client is uniquely identified by its PSK Identity.
 When using certificate fingerprints, a client is uniquely identified by the fingerprint of the presented client certificate.
 
 When using X.509 certificates with a PKIX trust model, a client is uniquely identified by the tuple of the serial number of the presended client certificate and the issuer of the client certificate.
+
+[^rpk-id]{:jf}
+
+[^rpk-id]: TODO: Client identity when using Raw Public Key needs to be described here.
 
 Note well: having identified a connecting entity does not mean the server necessarily wants to communicate with that client.
 For example, if the issuer is not in a trusted set of issuers, the server may decline to perform RADIUS transactions with this client.
@@ -378,6 +383,8 @@ RADIUS/TLS provides authentication and encryption between RADIUS peers.
 In the presence of proxies, the intermediate proxies can still inspect the individual RADIUS packets, i.e., "end-to-end" encryption is not provided.
 Where intermediate proxies are untrusted, it is desirable to use other RADIUS mechanisms to prevent RADIUS packet payload from inspection by such proxies.
 One common method to protect passwords is the use of the Extensible Authentication Protocol (EAP) and EAP methods that utilize TLS.
+
+For dynamic discovery, this document allows the acceptance of a certificate only after doing PKIX checks. When using publicly trusted CAs as trust anchor, this may lead to security issues, since an advisary may easily get a valid certificate from this CAs. In current practice of {{?RFC6614}}, this problem is circumvented by using a private CA as a trust anchor. This private CA only issues certificate to members of the roaming consortium. This may still enable a malicious member to intercept traffic not intended for them, however, depending on the size of the consortium, this attack vector may be negligible. If the private CA also issues certificates for other purposes than RADIUS/TLS, the RADIUS/TLS certificates SHOULD include RADIUS/TLS-specific attributes against the implementation can check such as a X.509v3 Certificate Policy specific for RADIUS/TLS.
 
 When using certificate fingerprints to identify RADIUS/TLS peers, any two certificates that produce the same hash value (i.e., that have a hash collision) will be considered the same client.
 Therefore, it is important to make sure that the hash function used is cryptographically uncompromised so that an attacker is very unlikely to be able to produce a hash collision with a certificate of his choice.
