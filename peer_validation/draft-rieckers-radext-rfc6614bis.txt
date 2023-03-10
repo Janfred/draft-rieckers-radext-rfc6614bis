@@ -2,7 +2,7 @@
 
 
 
-RADIUS EXTensions                                    J.-F. Rieckers, Ed.
+RADIUS EXTensions                                         J.-F. Rieckers
 Internet-Draft                                                       DFN
 Obsoletes: 6614 (if approved)                                  S. Winter
 Intended status: Standards Track                                 RESTENA
@@ -273,19 +273,25 @@ Table of Contents
          certificate subject.
 
       -  If the expected RADIUS/TLS server was not configured but
-         discovered as per [RFC7585], the realm which was used as input
-         to the discovery is matched against the presented realm names
-         from the subjectAltName:naiRealm extension; if no such
-         extension is present, the certificate is accepted without
-         further name checks immediately after the [RFC5280] trust chain
-         checks.
-         // The discovery may output a SRV record with hostnames.  Maybe
-         it is
-         // a good idea to check against those hostnames in addition to
-         the
-         // NAIRealm.
-         //
-         // -- Janfred
+         discovered as per [RFC7585], the peer executes the following
+         checks in this order, accepting the certificate on the first
+         match:
+
+         o  The realm which was used as input to the discovery is
+            matched against the presented realm names from the
+            subjectAltName:naiRealm extension.
+
+         o  If the discovery process yielded a hostname, this hostname
+            is matched against the presented names from the
+            subjectAltName:DNS extension; if no such exist, against the
+            presented CN component of the certificate subject.
+            Implementations MAY require the use of DNSSEC [RFC4033] to
+            ensure the authenticity of the DNS result before relying on
+            this for trust checks.
+
+         o  If the previous checks fail, the certificate MAY be accepted
+            without further name checks immediately after the [RFC5280]
+            trust chain checks.
 
    *  RADIUS/TLS server validate the incoming certificate against a
       local database of acceptable clients.  The database may enumerate
@@ -368,6 +374,12 @@ Table of Contents
    uniquely identified by the tuple of the serial number of the
    presended client certificate and the issuer of the client
    certificate.
+
+
+   // TODO: Client identity when using Raw Public Key needs to be
+   // described here.
+   //
+   // -- Janfred
 
    Note well: having identified a connecting entity does not mean the
    server necessarily wants to communicate with that client.  For
@@ -626,6 +638,20 @@ Table of Contents
    method to protect passwords is the use of the Extensible
    Authentication Protocol (EAP) and EAP methods that utilize TLS.
 
+   For dynamic discovery, this document allows the acceptance of a
+   certificate only after doing PKIX checks.  When using publicly
+   trusted CAs as trust anchor, this may lead to security issues, since
+   an advisary may easily get a valid certificate from this CAs.  In
+   current practice of [RFC6614], this problem is circumvented by using
+   a private CA as a trust anchor.  This private CA only issues
+   certificate to members of the roaming consortium.  This may still
+   enable a malicious member to intercept traffic not intended for them,
+   however, depending on the size of the consortium, this attack vector
+   may be negligible.  If the private CA also issues certificates for
+   other purposes than RADIUS/TLS, the RADIUS/TLS certificates SHOULD
+   include RADIUS/TLS-specific attributes against the implementation can
+   check such as a X.509v3 Certificate Policy specific for RADIUS/TLS.
+
    When using certificate fingerprints to identify RADIUS/TLS peers, any
    two certificates that produce the same hash value (i.e., that have a
    hash collision) will be considered the same client.  Therefore, it is
@@ -716,6 +742,11 @@ Table of Contents
               2022, <https://www.rfc-editor.org/rfc/rfc9325>.
 
 7.2.  Informative References
+
+   [RFC4033]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, "DNS Security Introduction and Requirements",
+              RFC 4033, DOI 10.17487/RFC4033, March 2005,
+              <https://www.rfc-editor.org/rfc/rfc4033>.
 
    [RFC4953]  Touch, J., "Defending TCP Against Spoofing Attacks",
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
@@ -884,7 +915,7 @@ Acknowledgments
 
 Authors' Addresses
 
-   Jan-Frederik Rieckers (editor)
+   Jan-Frederik Rieckers
    Deutsches Forschungsnetz | German National Research and Education Network
    Alexanderplatz 1
    10178 Berlin
