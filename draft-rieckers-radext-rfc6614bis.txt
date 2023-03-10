@@ -6,7 +6,7 @@ RADIUS EXTensions                                    J.-F. Rieckers, Ed.
 Internet-Draft                                                       DFN
 Obsoletes: 6614 (if approved)                                  S. Winter
 Intended status: Standards Track                                 RESTENA
-Expires: 8 June 2023                                     5 December 2022
+Expires: 11 September 2023                                 10 March 2023
 
 
           Transport Layer Security (TLS) Encryption for RADIUS
@@ -47,11 +47,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 June 2023.
+   This Internet-Draft will expire on 11 September 2023.
 
 Copyright Notice
 
-   Copyright (c) 2022 IETF Trust and the persons identified as the
+   Copyright (c) 2023 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -208,7 +208,7 @@ Table of Contents
 
    *  Support for TLS 1.2 [RFC5246] is REQUIRED, support for TLS 1.3
       [RFC8446] is RECOMMENDED.  RADIUS/TLS nodes MUST NOT negotiate TLS
-      versions prior to TLS 1.2
+      versions prior to TLS 1.2.
 
    *  Support for certificate-based mutual authentication is REQUIRED.
       // To me, it is not exactly clear if RADIUS/TLS implementations
@@ -315,11 +315,7 @@ Table of Contents
 
 2.3.3.  Authentication using TLS-PSK
 
-   The support for TLS-PSK is OPTIONAL.
-   // Here more text for the requirements of TLS-PSK is needed.  Maybe
-   // we also should move this from optional to recommended.
-   //
-   // -- Janfred
+   RADIUS/TLS implementations SHOULD support the use of TLS-PSK.
 
 2.3.4.  Authentication using Raw Public Keys
 
@@ -342,8 +338,8 @@ Table of Contents
    Section 2.3, the identification of clients can be done by different
    means:
 
-   In TLS-PSK operation, a client is uniquely identified by its TLS
-   identifier.
+   In TLS-PSK operation, a client is uniquely identified by its PSK
+   Identity.
 
    When using certificate fingerprints, a client is uniquely identified
    by the fingerprint of the presented client certificate.
@@ -386,12 +382,7 @@ Table of Contents
 
    *  Originating IP address
 
-   *  TLS Identifier
-      // Should this not be PSK Identifier?  (The line was copied
-      directly
-      // from RFC6614)
-      //
-      // -- Janfred
+   *  PSK Identity
 
 2.5.  RADIUS Datagrams
 
