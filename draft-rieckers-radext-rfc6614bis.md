@@ -182,6 +182,7 @@ When implementing this model, support for SHA-1 as hash algorithm for the finger
 ### Authentication using TLS-PSK
 
 RADIUS/TLS implementations SHOULD support the use of TLS-PSK.
+Further guidance on the usage of TLS-PSK in RADIUS/TLS is given in {{!I-D.dekok-radext-tls-psk}}.
 
 ### Authentication using Raw Public Keys
 
