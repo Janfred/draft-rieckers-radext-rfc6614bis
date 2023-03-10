@@ -342,6 +342,8 @@ Table of Contents
 2.3.3.  Authentication using TLS-PSK
 
    RADIUS/TLS implementations SHOULD support the use of TLS-PSK.
+   Further guidance on the usage of TLS-PSK in RADIUS/TLS is given in
+   [I-D.dekok-radext-tls-psk].
 
 2.3.4.  Authentication using Raw Public Keys
 
@@ -686,6 +688,12 @@ Table of Contents
 7.  References
 
 7.1.  Normative References
+
+   [I-D.dekok-radext-tls-psk]
+              DeKok, A., "RADIUS and TLS-PSK", Work in Progress,
+              Internet-Draft, draft-dekok-radext-tls-psk-00, 3 March
+              2023, <https://datatracker.ietf.org/doc/html/draft-dekok-
+              radext-tls-psk-00>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
