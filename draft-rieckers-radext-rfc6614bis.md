@@ -136,17 +136,12 @@ The following restrictions apply:
 
 * Support for TLS 1.2 {{!RFC5246}} is REQUIRED, support for TLS 1.3 {{!RFC8446}} is RECOMMENDED.
   RADIUS/TLS nodes MUST NOT negotiate TLS versions prior to TLS 1.2.
-* Support for certificate-based mutual authentication is REQUIRED.[^1]{:jf}
-* Negotiation of mutual authentication is REQUIRED.[^2]{:jf}
 * The RADIUS/TLS nodes MUST NOT offer or negotiate cipher suites which do not provide confidentiality and integrity protection.
 * The RADIUS/TLS nodes MUST NOT negotiate compression.
 * When using TLS 1.3, RADIUS/TLS nodes MUST NOT use early data ({{RFC8446}}, Section 2.3)
-* RADIUS/TLS nodes SHOULD support TLS-PSK mutual authentication {{!RFC4279}}
 * RADIUS/TLS implementations MUST, at minimum, support negotiation of the TLS_RSA_WITH_AES_128_CBC_SHA cipher suite and SHOULD follow the recommendations for supported cipher suites in {{RFC9325}}, Section 4.
 * In addition, RADIUS/TLS implementations MUST support negotiation of the mandatory-to-implement cipher suites required by the versions of TLS they support.
 
-[^1]: To me, it is not exactly clear if RADIUS/TLS implementations only need to support it or if the nodes actually need to do it (e.g. if it is allowed to configure a client to accept anonymous clients)
-[^2]: Same comment as before.
 
 Details for peer authentication are described in {{TLSPeerAuth}}.
 
@@ -155,7 +150,9 @@ The shared secret to compute the (obsolete) MD5 integrity checks and attribute o
 
 ## TLS Peer Authentication {#TLSPeerAuth}
 
+Peers MUST mutually authenticate each other at the TLS layer.
 The authentication of peers can be done using different models, that will be described here.
+Peers can also perform additional authorization checks based on non-TLS information. For example, verifying that the client IP address (source IP address of the TLS connection) falls within a particular network range.
 
 ### Authentication using X.509 certificates with PKIX trust model
 
@@ -164,12 +161,14 @@ All RADIUS/TLS implementations MUST implement this model, following the followin
 * Implementations MUST allow the configuration of a list of trusted Certificate Authorities for incoming connections.
 * Certificate validation MUST include the verification rules as per {{!RFC5280}}.
 * Implementations SHOULD indicate their trusted Certification Authorities (CAs). See {{RFC5246}}, Section 7.4.4 and {{!RFC6066}}, Section 6 for TLS 1.2 and {{RFC8446}}, Section 4.2.4 for TLS 1.3.
-* Peer validation always includes a check on whether the locally configured expected expected DNS name or IP address of the server that is contacted matches its presented certificate. [^3]{:jf}
-  DNS names and IP addresses can be contained in the Common Name (CN) or subjectAltName entries.
-  For verification, only one of these entries is to be considered.
-  The following precedence applies:
-  for DNS name validation, subjectAltName:DNS has precedence over CN; for IP address validation, subjectAltName:iPAddr has precedence over CN.
-  Implementors of this specification are advised to read {{?RFC6125}}, Section 6, for more details on DNS name validation. [^4]{:jf}
+* RADIUS/TLS clients validate the server identity to match their local configuration:
+  * If the expected RADIUS/TLS server was configured as a hostname, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exist, against the presented CN component of the certificate subject.
+  * If the expected RADIUS/TLS server was configured as an IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate subject.
+  * If the expected RADIUS/TLS server was not configured but discovered as per {{RFC7585}}, the realm which was used as input to the discovery is matched against the presented realm names from the subjectAltName:naiRealm extension; if no such extension is present, the certificate is accepted without further name checks immediately after the {{RFC5280}} trust chain checks.[^discovery]{:jf}
+* RADIUS/TLS server validate the incoming certificate against a local database of acceptable clients. The database may enumerate acceptable clients either by IP address or by a name component in the certificate.
+  * For clients configured by name, the configured name is matched against the presented names from the subjectAltName:DNS extension; if no such exists, against the presented CN component in the certificate subject.
+  * For clients configured by their source IP address, the configured IP address is matched against the presented addresses in the subjectAltName:iPAddr extension; if no such exist, against the presented CN component of the certificate subject.
+  * It is possible for a RADIUS/TLS server to not require additional name checks for incoming RADIUS/TLS clients. In this case, the certificate is accepted immediately after the {{RFC5280}} trust chain checks. This MUST NOT be used outside of trusted network environments or without additional certificate attribute checks in place.
 * Implementations MAY allow the configuration of a set of additional properties of the certificate to check for a peer's authorization to communicate (e.g., a set of allowed values in subjectAltName:URI or a set of allowed X.509v3 Certificate Policies).
 * When the configured trust base changes (e.g., removal of a CA from the list of trusted CAs; issuance of a new CRL for a given CA), implementations MAY renegotiate the TLS session to reassess the connecting peer's continued authorization.[^5]{:jf}
 
@@ -186,8 +185,7 @@ RADIUS/TLS implementations SHOULD support the use of TLS-PSK.
 
 RADIUS/TLS implementations SHOULD support using Raw Public Keys {{!RFC7250}} for mutual authentication.[^rpk]{:jf}
 
-[^3]: This sentence does not include an RFC2119 modifier. Should be fixed.
-[^4]: Maybe usage of CN should be deprecated here?
+[^discovery]: The discovery may output a SRV record with hostnames. Maybe it is a good idea to check against those hostnames in addition to the NAIRealm.
 [^5]: Replace may with should here?
 [^rpk]: TODO: More text here.
 
