@@ -458,7 +458,7 @@ Hopefully the differences to {{RFC6614}} are small enough that almost no config 
 # Acknowledgments
 {:numbered="false"}
 
-Thanks to the original authors of RFC 6614: Stefan Winter, Mike McCauley, Stig Venaas and Klaas Vierenga.
+Thanks to the original authors of RFC 6614: Mike McCauley, Stig Venaas and Klaas Vierenga.
 
 TODO more acknowledgements
 
