@@ -1,5 +1,10 @@
 # Transport Layer Security (TLS) Encryption for RADIUS
 
+> **Warning**
+> This document has now moved to [draft-janfred-radext-radiusdtls-bis](https://github.com/Janfred/draft-janfred-radext-radiusdtls-bis).
+> This repository is archived, for further discussion, see the RADIUS/(D)TLS-bis document.
+
+
 This is the working area for the individual Internet-Draft, "Transport Layer Security (TLS) Encryption for RADIUS".
 
 * [Editor's Copy](https://Janfred.github.io/draft-rieckers-radext-rfc6614bis/#go.draft-rieckers-radext-rfc6614bis.html)
